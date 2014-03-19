@@ -7,7 +7,19 @@ from astropy.io import ascii
 
 Dumps two columns from a FITS file into an ASCII file.
 
+Note that this still prints the two column names in the first line. The 'no_header' ASCII
+option doesn't seem to be working. Column names are case-sensitive.
+
+
 Written in Python 2.7 by A.L. Stevens, A.L.Stevens@uva.nl, 2014
+
+Passed: fits_file - str - Name of input FITS file (full path)
+		ext - int - FITS extension of the data
+		col1 - str - Column header of first column of data
+		col2 - str - Column header of second column of data
+		ascii_file - str - Name of output ASCII file
+
+Returns: nothing, but writes to the ASCII file
 
 """
 
@@ -38,7 +50,7 @@ def main(fits_file, ext, col1, col2, ascii_file):
 
 	# table = np.column_stack((fits_data.field(col1), fits_data.field(col2)))
 
-	ascii.write(fits_data, output=ascii_file, include_names=[col1, col2], formats='no_header', fill_include_names="")
+	ascii.write(fits_data, output=ascii_file, include_names=[col1, col2], formats='no_header')
 
 	# ## Writing the columns of fits data to an ascii table
 	# out = open(ascii_file, 'w')
