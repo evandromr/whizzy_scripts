@@ -4,12 +4,12 @@ import os
 		clean_ports.py
 	
 Selfupdates macports, checks for inactive ports, and uninstalls inactive ports. 
+Note that this program assumes that macports is installed. I don't know what would happen
+if you tried to run this without having macports installed.
+
+No arguments to be passed in.
 
 Written in Python 2.7 by A.L. Stevens, A.L.Stevens@uva.nl, 2014
-
-Passed: nothing
-
-Returns: nothing
 
 """
 
