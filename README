@@ -1,0 +1,26 @@
+Whizzy little scripts I write for fun, mostly to help with research, in Python 2.7. 
+
+All scientific modules imported in the scripts, as well as python 2.7, can be downloaded 
+in the Anaconda package, https://store.continuum.io/cshop/anaconda/
+
+
+CONTENTS OF WHIZZY_SCRIPTS:
+
+clean_ports.py -- Selfupdates macports, checks for inactive ports, and uninstalls inactive 
+ports. Note that this program assumes that macports is installed. I don't know what would 
+happen if you tried to run this without having macports installed.
+
+dump_columns.py -- Dumps two columns from a FITS file into an ASCII/txt/dat file.
+
+fits_info.py -- Prints HDU information, extension 1 header keywords, and extension 1 
+column names for a given FITS file. Using extension 1 here for RXTE event-mode data.
+
+get_keyword.py -- Gets the value of a keyword from a FITS header.
+
+obs_epoch_rxte.py -- Determines the observational epoch of a specific RXTE observation.
+Can also tell you the total observation time of a list of observation files.
+Be careful with this one, it's barely tested.
+
+
+
+This code comes with no guarantees.
