@@ -4,8 +4,8 @@ from astropy.io import fits
 """
 		fits_info.py
 	
-Prints HDU list information, extension 1 header keywords, and extension 1 column names 
-for a given FITS file. Using extension 1 here for RXTE event-mode science data.
+Prints HDU information, extension 1 header keywords, and extension 1 column names for a 
+given FITS file. Using extension 1 here for RXTE event-mode data.
 
 Arguments:
 fits_file - str - The full path of the FITS file in question.
@@ -16,7 +16,7 @@ All scientific modules imported above, as well as python 2.7, can be downloaded 
 Anaconda package, https://store.continuum.io/cshop/anaconda/
 I don't think argparse came with Anaconda, but I don't remember installing anything 
 special to get it.
-
+	
 """
 
 def main(fits_file):
@@ -26,18 +26,18 @@ def main(fits_file):
 	## Print out the basic info on structure of FITS file.
 	print "\n", file_hdu.info()
 
-	# print file_hdu[0].header
+	print file_hdu[0].header.keys
 	# print file_hdu[0].header.keys
 	# print file_hdu[1].header
 	print "\n", file_hdu[1].header.keys
 	print "\nColumns of data table in ext 1:", file_hdu[1].columns.names
 	print ""
 
-	# print file_hdu[2].header
-
 # 	table = file_hdu[1].data
 # 	segment_rate = table[0:128].field(1).astype(int)
 # 	print segment_rate
+	
+	print file_hdu[1].data
 	
 	file_hdu.close()
 	
