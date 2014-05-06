@@ -26,8 +26,20 @@ special to get it.
 
 """
 
+def total_obs_time(file_list):
 
-def main(fits_file):
+	input_files = [line.strip() for line in open(file_list)]
+	
+	total_time = 0
+	for file in input_files:
+		start_time = float(get_keyword.main(file, 0, 'TSTART')
+		stop_time = float(get_keyword.main(file, 0, 'TSTOP')
+		time = stop_time - start_time
+		total_time += time
+	print total_time
+	
+
+def get_epoch(fits_file):
 	pass
 	obs_time = get_keyword.main(fits_file, 0, 'DATE-OBS')
 	print obs_time
@@ -119,7 +131,7 @@ if __name__ == "__main__":
 	parser.add_argument('fits_file', help="The full path of the FITS file.")
 	args = parser.parse_args()
 
-	epoch = main(args.fits_file)
+	epoch = get_epoch(args.fits_file)
 	print "Epoch of observation: %d" % epoch
 	
 ## End of program 'obs_epoch_rxte.py'
