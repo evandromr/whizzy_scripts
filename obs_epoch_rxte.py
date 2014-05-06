@@ -6,6 +6,8 @@ import get_keyword
 """
 		obs_epoch_rxte.py
 
+Determines the epoch of an RXTE observation. Can also compute the total observation time 
+for a set of observations.
 
 MANY WARNINGS:
 1. This has not been rigorously tested (barely tested, really) and is not guaranteed.
@@ -26,22 +28,41 @@ special to get it.
 
 """
 
+##############################
 def total_obs_time(file_list):
+	"""
+			total_obs_time
+	
+	Passed: file_list - str - List of FITS observation files. One file per line.
+	
+	Returns: total_time - float - The total observational time of all observations in the 
+				list.
+				
+	"""
 
 	input_files = [line.strip() for line in open(file_list)]
 	
 	total_time = 0
 	for file in input_files:
-		start_time = float(get_keyword.main(file, 0, 'TSTART')
-		stop_time = float(get_keyword.main(file, 0, 'TSTOP')
+		start_time = float(get_keyword.main(file, 0, 'TSTART', 0))
+		stop_time = float(get_keyword.main(file, 0, 'TSTOP', 0))
 		time = stop_time - start_time
 		total_time += time
 	print total_time
+	return total_time
 	
-
+#########################
 def get_epoch(fits_file):
+	"""
+			get_epoch
+			
+	Passed: fits_file - str - Name of an RXTE observation FITS file.
+	
+	Returns: epoch - int - The RXTE observation epoch of the FITS observation file.
+	
+	"""
 	pass
-	obs_time = get_keyword.main(fits_file, 0, 'DATE-OBS')
+	obs_time = get_keyword.main(fits_file, 0, 'DATE-OBS', 0)
 	print obs_time
 	print len(obs_time)
 	year = -1
@@ -125,10 +146,12 @@ def get_epoch(fits_file):
 		return 5
 
 	## End of function 'main'
-	
+
+##########################
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('fits_file', help="The full path of the FITS file.")
+	parser.add_argument('fits_file', \
+		help="The full path of the RXTE observation FITS file.")
 	args = parser.parse_args()
 
 	epoch = get_epoch(args.fits_file)
