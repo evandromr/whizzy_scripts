@@ -7,7 +7,7 @@ from astropy.io import fits
 Gets the value of a keyword from a FITS header.
 
 Use this in a bash script like so:
-variable=$(python "$script_dir"/get_keyword.py "$filter_file" 1 KEY True)
+variable=$(python "$script_dir"/get_keyword.py "$filter_file" 1 KEYNAME 1)
 This finds the value of 'KEY' in the first ('1') extension of 'filter_file' and assigns 
 it to 'variable'. Keyword does not seem to be case-sensitive.
 
