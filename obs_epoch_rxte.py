@@ -6,8 +6,7 @@ import get_keyword
 """
 		obs_epoch_rxte.py
 
-Determines the epoch of an RXTE observation. Can also compute the total observation time 
-for a set of observations.
+Determines the epoch of an RXTE observation.
 
 MANY WARNINGS:
 1. This has not been rigorously tested (barely tested, really) and is not guaranteed.
@@ -15,6 +14,8 @@ MANY WARNINGS:
 3. The times of crossover dates are not yet understood.
 4. Returning '0' for the epoch means that something broke.
 5. It currently cannot categorize 'crossover' dates
+
+Future updates: use MJD
 
 Arguments:
 fits_file - str - The full path of the FITS file in question.
@@ -28,33 +29,15 @@ special to get it.
 
 """
 
-##############################
-def total_obs_time(file_list):
-	"""
-			total_obs_time
-	
-	Passed: file_list - str - List of FITS observation files. One file per line.
-	
-	Returns: total_time - float - The total observational time of all observations in the 
-				list.
-				
-	"""
 
-	input_files = [line.strip() for line in open(file_list)]
-	
-	total_time = 0
-	for file in input_files:
-		start_time = float(get_keyword.main(file, 0, 'TSTART', 0))
-		stop_time = float(get_keyword.main(file, 0, 'TSTOP', 0))
-		time = stop_time - start_time
-		total_time += time
-	print total_time
-	return total_time
 	
 #########################
 def get_epoch(fits_file):
 	"""
 			get_epoch
+			
+	Have this in a separate method so that it can return a value; useful when importing 
+	this into other programs.
 			
 	Passed: fits_file - str - Name of an RXTE observation FITS file.
 	
@@ -62,30 +45,31 @@ def get_epoch(fits_file):
 	
 	"""
 	pass
-	obs_time = get_keyword.main(fits_file, 0, 'DATE-OBS', 0)
-	print obs_time
-	print len(obs_time)
+	
+	obs_time = get_keyword.main(fits_file, 0, 'DATE-OBS')
+	print "DATE-OBS =", obs_time
+	print "Length of DATE-OBS =", len(obs_time)
 	year = -1
 	month = -1
 	day = -1
 	if len(obs_time) == 8:
 		day = int(obs_time[0:2])
-		print day
+		print "Day =", day
 		month = int(obs_time[3:5])
-		print month
+		print "Month =", month
 		year = obs_time[6:8]
 		if year[0] == '9':
 			year = int("19"+year)
 		else:
 			year = int("20"+year)
-		print year
+		print "Year =", year
 	elif len(obs_time) == 19:
 		year = int(obs_time[0:4])
-		print year
+		print "Year =", year
 		month = int(obs_time[5:7])
-		print month
+		print "Month =", month
 		day = int(obs_time[8:10])
-		print day
+		print "Day =", day
 	else:
 		print "\tERROR: Format of date is not understood."
 		return 0
@@ -95,7 +79,7 @@ def get_epoch(fits_file):
 	
 	## Determining which epoch the date falls in
 	
-	if year = -1 or month = -1 or day = -1:
+	if (year is -1) or (month is -1) or (day is -1):
 		print "\tERROR: Month, date, or year not properly assigned."
 		return 0
 	
@@ -144,14 +128,13 @@ def get_epoch(fits_file):
 		
 	else:
 		return 5
+	## End of function 'get_epoch'
 
-	## End of function 'main'
 
 ##########################
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('fits_file', \
-		help="The full path of the RXTE observation FITS file.")
+	parser.add_argument('fits_file', help="The full path of the RXTE observation FITS file.")
 	args = parser.parse_args()
 
 	epoch = get_epoch(args.fits_file)
