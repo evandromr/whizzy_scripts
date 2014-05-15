@@ -25,7 +25,7 @@ special to get it.
 """
 
 if __name__ == "__main__":
-	
+	pass
 	parser = argparse.ArgumentParser()
 	parser.add_argument('fits_file', help="The full path of the FITS file.")
 	parser.add_argument('ext', type=int, help="The FITS extension of the data to dump.")
