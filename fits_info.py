@@ -20,7 +20,7 @@ special to get it.
 """
 
 if __name__ == "__main__":
-	
+	pass
 	parser = argparse.ArgumentParser()
 	parser.add_argument('fits_file', help="The full path of the FITS file in question.")
 	args = parser.parse_args()
