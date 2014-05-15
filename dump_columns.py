@@ -24,46 +24,6 @@ special to get it.
 
 """
 
-def main(fits_file, ext, col1, col2, out_file):
-	pass
-	
-	assert (ext >= 0 and ext <= 3) # RXTE FITS files shouldn't have more than 3 exensions
-	
-	## Opens the fits file using the Astropy library 'fits.open'.
-	hdulist = fits.open(fits_file)
-	## Print out the basic info on structure of FITS file.
-	# print hdulist.info()
-
-	# print hdulist[0].header
-	# print hdulist[1].header
-	# print hdulist[2].header
-	fits_data = hdulist[ext].data
-	# print table
-	cols = hdulist[ext].columns
-	# print "Column names:", cols.names
-	hdulist.close()
-
-	print fits_data[1].field(col1)
-	print fits_data[1].field(col2)
-
-	assert len(fits_data.field(col1)) == len(fits_data.field(col2))
-
-# 	table = np.column_stack((fits_data.field(col1), fits_data.field(col2)))
-	print "Going to output"
-# ## Writing the columns of fits data to an table
-# 	out = open(out_file, 'w')
-# 	for i in range(len(fits_data.field(col1))):
-# 		out.write("%r\t%r\n" % (fits_data[i].field(col1), fits_data[i].field(col2)))
-# 		if i % 1000 == 0:
-# 			print "i = ", i
-# 	out.write(table)
-# 	out.close()
-	
-	ascii.write(fits_data, output=out_file, include_names=[col1, col2], formats='no_header')
-
-	
-	## End of function 'main'
-
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
@@ -74,6 +34,33 @@ if __name__ == "__main__":
 	parser.add_argument('out_file', help="The full path of the ASCII/txt/dat file to dump to.")
 	args = parser.parse_args()
 
-	main(args.fits_file, args.ext, args.col1, args.col2, args.out_file)
+	assert (args.ext >= 0 and args.ext <= 3) # RXTE FITS files shouldn't have more than 3 exensions
+	
+	fits_hdu = fits.open(args.fits_file)
+	# print fits_hdu.info()
+
+	# print fits_hdu[0].header
+	# print fits_hdu[1].header
+	# print fits_hdu[2].header
+	fits_data = fits_hdu[args.ext].data
+	cols = fits_hdu[args.ext].columns
+	# print "Column names:", cols.names
+	fits_hdu.close()
+
+# 	print fits_data[1].field(args.col1)
+# 	print fits_data[1].field(args.col2)
+
+	assert len(fits_data.field(args.col1)) == len(fits_data.field(args.col2))
+
+# 	table = np.column_stack((fits_data.field(args.col1), fits_data.field(args.col2)))
+# 	print "Going to output"
+# ## Writing the columns of fits data to an table
+# 	out = open(args.out_file, 'w')
+# 	for i in range(len(fits_data.field(args.col1))):
+# 		out.write("%r\t%r\n" % (fits_data[i].field(args.col1), fits_data[i].field(args.col2)))
+# 	out.write(table)
+# 	out.close()
+	
+	ascii.write(fits_data, output=args.out_file, include_names=[args.col1, args.col2], formats='no_header')
 	
 ## End of program 'dump_columns.py'
