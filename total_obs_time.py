@@ -16,6 +16,7 @@ get_keyword is available in my Git repository 'whizzy_scripts'
 
 ##########################	
 if __name__ == "__main__":
+	pass
 	parser = argparse.ArgumentParser()
 	parser.add_argument('file_list', \
 		help="Name of file with list of fits files of the observations.")
