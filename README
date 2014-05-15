@@ -1,10 +1,12 @@
 Whizzy little scripts I write for fun, mostly to help with research, in Python 2.7. 
 
-All scientific modules imported in the scripts, as well as python 2.7, can be downloaded 
+Scientific modules imported in the scripts, as well as python 2.7, can be downloaded 
 in the Anaconda package, https://store.continuum.io/cshop/anaconda/
 
 
 CONTENTS OF WHIZZY_SCRIPTS:
+
+2x.py -- Take 2 to the power of x.
 
 clean_ports.py -- Selfupdates macports, checks for inactive ports, and uninstalls inactive 
 ports. Note that this program assumes that macports is installed. I don't know what would 
@@ -18,8 +20,10 @@ column names for a given FITS file. Using extension 1 here for RXTE event-mode d
 get_keyword.py -- Gets the value of a keyword from a FITS header.
 
 obs_epoch_rxte.py -- Determines the observational epoch of a specific RXTE observation.
-Can also tell you the total observation time of a list of observation files.
 Be careful with this one, it's barely tested.
+
+total_obs_time.py -- Computes the total observation time for a list of FITS observation 
+files.
 
 
 
