@@ -8,35 +8,40 @@ Prints HDU information, extension 1 header keywords, and extension 1 column name
 given FITS file. Using extension 1 here for RXTE event-mode data.
 
 Arguments:
-fits_file - str - The full path of the FITS file in question.
+fits_file - The full path of the FITS file in question.
 
 Written in Python 2.7 by A.L. Stevens, A.L.Stevens@uva.nl, 2014
 
 All scientific modules imported above, as well as python 2.7, can be downloaded in the 
 Anaconda package, https://store.continuum.io/cshop/anaconda/
-I don't think argparse came with Anaconda, but I don't remember installing anything 
-special to get it.
 	
 """
 
 if __name__ == "__main__":
-	pass
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument('fits_file', help="The full path of the FITS file in question.")
 	args = parser.parse_args()
 	
 	## Opens the fits file using the Astropy library 'fits.open'.
 	file_hdu = fits.open(args.fits_file)
+	
 	## Print out the basic info on structure of FITS file.
 	print "\n", file_hdu.info()
-
+	
+	# .header.keys outputs much cleaner than just .header
 	print file_hdu[0].header.keys
-	# print file_hdu[0].header.keys
-	# print file_hdu[1].header
 	print "\n", file_hdu[1].header.keys
 	print "\nColumns of data table in ext 1:", file_hdu[1].columns.names
 	print ""
-	print file_hdu[1].data[0]
+	
+# 	print file_hdu[1].data[0]
+# 	print "%.13f" % file_hdu[1].data[0].field(0)
+# 	print file_hdu[1].data[1]
+# 	print "%.13f" % file_hdu[1].data[1].field(0)
+	
+# 	print file_hdu[2].header.keys
+# 	print file_hdu[2].data
 	
 # 	cols=file_hdu[1].columns.names
 # 	for col in cols:
