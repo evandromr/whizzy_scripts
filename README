@@ -28,10 +28,8 @@ obs_epoch_rxte.py -- Determines the observational epoch of a specific RXTE
 total_obs_time.py -- Computes the total observation time for a list of FITS 
 	observation files.
 
-
-
 tools.py -- centralized helper methods to import and call within another 
-	function
+	function:
 
 get_key_val can get the value of a keyword from a FITS header; 
 compute_obs_time computes the total observation time in seconds of a list of 
