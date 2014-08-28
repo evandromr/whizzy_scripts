@@ -9,18 +9,20 @@ import itertools
 This has not been rigorously tested.
 There is no 'main' to this program; only helper methods to import and be called.
 
-To assign the returned value to a variable in a bash script (in the directory containing
-tools.py): 
-var=$(python -c 'from tools import the_function; print the_function(passing variables)')
+To assign the returned value to a variable in a bash script (in the directory 
+containing tools.py, or with that directory added to PYTHONPATH) (where 'fun' 
+is the function name and 'vars' are the variables to be passed in):
+var=$(python -c 'from tools import fun; print fun(vars)')
+Alternatively: python -c "from tools import fun; fun(vars)" >> a_file
 
 Written in Python 2.7 by A.L. Stevens, A.L.Stevens@uva.nl, 2013-2014
 
-The scientific modules imported above, as well as python 2.7, can be downloaded in the 
-Anaconda package, https://store.continuum.io/cshop/anaconda/
+The scientific modules imported above, as well as python 2.7, can be downloaded
+in the Anaconda package, https://store.continuum.io/cshop/anaconda/
 
 """
 
-#########################################################################################
+###############################################################################
 def get_key_val(fits_file, ext, keyword):
 	"""
 			get_key_val
@@ -29,7 +31,8 @@ def get_key_val(fits_file, ext, keyword):
 	case-sensitive.
 
 	Passed: fits_file - str - The full path of the FITS file.
-			ext - int - The FITS extension in which to search for the given keyword.
+			ext - int - The FITS extension in which to search for the given 
+				keyword.
 			keyword - str - The keyword for which you want the associated value.
 			
 	Returns: key_value - any - Value of the given keyword.
@@ -39,7 +42,6 @@ def get_key_val(fits_file, ext, keyword):
 	ext = np.int8(ext)
 	assert (ext >= 0 and ext <= 3)
 	keyword = str(keyword)
-
 	hdulist = fits.open(fits_file)
 	key_value = hdulist[ext].header[keyword]
 	hdulist.close()
@@ -48,14 +50,16 @@ def get_key_val(fits_file, ext, keyword):
 	## End of function 'get_key_val'
 
 
-#########################################################################################
+###############################################################################
 def compute_obs_time(file_list):
 	"""
 			compute_obs_time
 		
-	Computes the total observation time of a list of observation FITS files, in seconds.
+	Computes the total observation time of a list of observation FITS files, in
+	seconds.
 	
-	Passed: file_list - str - Name of file with list of fits files of the observations.
+	Passed: file_list - str - Name of file with list of fits files of the 
+				observations.
 	
 	Returns: total_time - float - The total observation time.
 	
@@ -68,11 +72,12 @@ def compute_obs_time(file_list):
 		time = float(get_key_val(file, 1, 'ONTIME'))
 		total_time += time
 
-	return total_time # in seconds, but can double check units of times in FITS header
-	## End of function 'compute_obs_time'
+	return total_time # in seconds
+	## but can double check units of times in FITS header
+## End of function 'compute_obs_time'
 
 	
-#########################################################################################
+###############################################################################
 def read_obs_time(in_file):
 	"""
 		
@@ -80,8 +85,8 @@ def read_obs_time(in_file):
 		
 	Read the total observation time from the header of a text file.
 	
-	Passed: in_file - str - Name of (ASCII/txt/dat) input file with observation duration 
-				in line 5 (starting at 0) of the header.
+	Passed: in_file - str - Name of (ASCII/txt/dat) input file with exposure 
+				time in the header.
 		
 	Returns: nothing
 	
@@ -90,17 +95,17 @@ def read_obs_time(in_file):
 	with open(in_file, 'r') as f:
 		for line in f:
 			if line[0].strip() == "#":
-				if "duration" in line.strip():
+				if "xposure" in line.strip():
 					line = line.strip().split()
 # 					print line
-					obs_time = float(line[len(line)-2])
+					obs_time = float(line[-2])
 					return obs_time
 			else:
-				return 0
-	## End of function 'read_obs_time'
+				return 0.0
+## End of function 'read_obs_time'
 
 
-#########################################################################################
+###############################################################################
 def power_of_two(num):
 	"""
 			power_of_two
@@ -109,7 +114,7 @@ def power_of_two(num):
 	
 	Passed: num - int - The number in question.
 	
-	Returns: a bool - 'True' if 'num' is a power of two, 'False' if 'num' is not.
+	Returns: bool - 'True' if 'num' is a power of two, 'False' if 'num' is not.
 	
 	"""
 
@@ -122,9 +127,9 @@ def power_of_two(num):
 		while x < n and x < 2147483648:
 			x *= 2
 		return n == x
-	## End of function 'power_of_two'
+## End of function 'power_of_two'
 	
-	#########################################################################################
+###############################################################################
 def pairwise(iterable):
 	"""
 			pairwise
@@ -135,17 +140,18 @@ def pairwise(iterable):
 	
 	Passed: an iterable, like a list or an open file
 	
-	Returns: the next two items in an iterable, like in the example a few lines above.
+	Returns: the next two items in an iterable, like in the example a few lines
+				above.
 	
 	"""
 
 	a, b = itertools.tee(iterable)
 	next(b, None)
 	return itertools.izip(a, b)
-	## End of function 'pairwise'
+## End of function 'pairwise'
 	
 	
-#########################################################################################
+###############################################################################
 def replace_key_val(fits_file, ext, keyword, value):
 	"""
 			replace_key_val
@@ -153,7 +159,8 @@ def replace_key_val(fits_file, ext, keyword, value):
 	Replaces the value of a keyword in a FITS header with a given value.
 	
 	Passed: fits_file - str - Name of a FITS file.
-			ext - int - The FITS extension in which you want to replace the keyword value.
+			ext - int - The FITS extension in which you want to replace the 
+				keyword value.
 			keyword - str - The keyword of the value you want to replace.
 			value - any - The new value for the FITS header keyword.
 	
@@ -165,15 +172,41 @@ def replace_key_val(fits_file, ext, keyword, value):
 	keyword = str(keyword)
 	
 	hdu = fits.open(fits_file, mode='update')
-	# print "Before replacing keyword value, %s = %f" %(keyword, hdu[ext].header[keyword])
+# 	print "Before replacing keyword value, %s = %f" \
+# 		%(keyword, hdu[ext].header[keyword])
 	hdu[ext].header[keyword] = value
-	# print "After replacing keyword value, %s = %f" %(keyword, hdu[ext].header[keyword])
+# 	print "After replacing keyword value, %s = %f" \
+# 	%(keyword, hdu[ext].header[keyword])
 	hdu.flush()
 	hdu.close()
+	return
 	## End of function 'replace_key_val'
+
+###############################################################################
+def time_ordered_list(file_list):
+	"""
+			time_ordered_list
+			
+	Takes an input file containing a list of fits files, gets the start time of 
+	each file, sorts the files based on listed start time (from keyword TSTART),
+	applies the same sort to the file names, and prints the sorted file names.
+	
+	Passed: file_list - str - Name of a list of FITS files.
+	
+	Returns: nothing, but prints
+	
+	"""
+	files = [line.strip() for line in open(file_list)]
+	times = [float(get_key_val(fits_file, 1, 'TSTART')) for fits_file in files]
+# 	for (time, filename) in zip(times, files): print time," ",filename
+	sorted_files = [x for y,x in sorted(zip(times,files))]
+# 	for time in sorted(times): print time
+	for filename in sorted_files: print filename
+	return
+	## End of function 'time_ordered_list'
 	
 	
-#########################################################################################
+###############################################################################
 def obs_epoch_rxte(fits_file):
 	"""
 			obs_epoch_rxte
@@ -182,14 +215,17 @@ def obs_epoch_rxte(fits_file):
 	Future update: use MJD.
 
 	WARNING:
-	1. This has not been rigorously tested (barely tested, really) and is not guaranteed.
-	2. It can only understand and parse 'DATE-OBS' keyword values with length 8 or 
-		length 19.
-	3. I'm interpreting the 'stop time' listed as the start time of the next epoch.
+	1. This has not been rigorously tested (barely tested, really) and is not 
+		guaranteed.
+	2. It can only understand and parse 'DATE-OBS' keyword values with length 8
+		or length 19.
+	3. I'm interpreting the 'stop time' listed as the start time of the next 
+		epoch.
 	
 	Passed: fits_file - str - Name of an RXTE observation FITS file.
 	
-	Returns: epoch - int - The RXTE observation epoch of the FITS observation file.
+	Returns: epoch - int - The RXTE observation epoch of the FITS observation 
+				file.
 	
 	"""
 	
@@ -229,9 +265,13 @@ def obs_epoch_rxte(fits_file):
 		print "\n\tERROR: Format of date is not understood."
 		return 0
 		
-	assert (year >= 1995 and year <= 2012) ## Making sure that the date is actually when 
-										   ##  RXTE was operational
-	if (year is -1) or (month is -1) or (day is -1) or (hour is -1) or (minute is -1):
+	assert (year >= 1995 and year <= 2012) ## Making sure the date is actually 
+										   ## when RXTE was operational
+	if (year is -1) or \
+		(month is -1) or \
+		(day is -1) or \
+		(hour is -1) or \
+		(minute is -1):
 		print "\n\tERROR: Month, date, year, hour, or minute not properly assigned."
 		return 0
 	
@@ -299,7 +339,7 @@ def obs_epoch_rxte(fits_file):
 	## End of function 'obs_epoch_rxte'
 
 
-#########################################################################################
+###############################################################################
 if __name__ == '__main__':
 
 	print "\n\t\t tools.py"
