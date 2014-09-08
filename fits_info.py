@@ -33,16 +33,21 @@ if __name__ == "__main__":
 	print file_hdu[0].header.keys
 	print "\n", file_hdu[1].header.keys
 	print "\nColumns of data table in ext 1:", file_hdu[1].columns.names
-	print ""
+# 	print "\n", file_hdu[2].header.keys
 	
 # 	print file_hdu[1].data[0]
 # 	print "%.13f" % file_hdu[1].data[0].field(0)
-# 	print file_hdu[1].data[1]
-# 	print "%.13f" % file_hdu[1].data[1].field(0)
+# 	print file_hdu[1].data
+	print "%.21f" % file_hdu[1].data[0].field(0)
+	print "%.21f" % file_hdu[1].data[-1].field(0)
+
 	
 # 	print file_hdu[2].header.keys
 # 	print file_hdu[2].data
-	
+# 	
+# 	print file_hdu[3].header.keys
+# 	print file_hdu[3].data
+# 	
 # 	cols=file_hdu[1].columns.names
 # 	for col in cols:
 # 		if "pcu2" in col.lower():
@@ -55,8 +60,8 @@ if __name__ == "__main__":
 # 	for i in range(0,10):
 # 		print file_hdu[1].data[i].field(0)
 	
-	num_points=len(file_hdu[1].data.field(1))
-# 	print file_hdu[1].data[num_points-1].field(0)
+# 	num_points=len(file_hdu[1].data.field(0))
+# 	print "%.13f" % file_hdu[1].data[num_points-1].field(0)
 
 	file_hdu.close()
 ## End of program 'fits_info.py'
