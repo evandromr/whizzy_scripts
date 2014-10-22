@@ -2,6 +2,7 @@ from astropy.io import fits
 import numpy as np
 import scipy as sp
 import itertools
+import argparse
 
 """
 		tools.py
@@ -42,8 +43,10 @@ def get_key_val(fits_file, ext, keyword):
 	ext = np.int8(ext)
 	assert (ext >= 0 and ext <= 3)
 	keyword = str(keyword)
+	
 	hdulist = fits.open(fits_file)
 	key_value = hdulist[ext].header[keyword]
+# 	print key_value
 	hdulist.close()
 	
 	return key_value
@@ -110,16 +113,16 @@ def power_of_two(num):
 	"""
 			power_of_two
 			
-	Checks if 'num' is a power of 2 (1 <= num < 2147483648).
+	Checks if an input is a power of 2 (1 <= num < 2147483648).
 	
 	Passed: num - int - The number in question.
 	
 	Returns: bool - 'True' if 'num' is a power of two, 'False' if 'num' is not.
 	
 	"""
-
 	n = int(num)
 	x = 2
+	assert n > 0
 	
 	if n == 1:
 		return True
@@ -128,6 +131,59 @@ def power_of_two(num):
 			x *= 2
 		return n == x
 ## End of function 'power_of_two'
+
+
+###############################################################################
+def type_power_of_two(num):
+	"""
+			type_power_of_two
+			
+	Checks if an input is a power of 2 (1 <= num < 2147483648), as an argparse 
+	type.
+	
+	Passed: num - The number in question.
+	
+	Returns: n if it's a power of two, ArgumentTypeError if it isn't.
+	
+	"""
+	n = int(num)
+	x = 2
+	assert n > 0
+
+	if n == 1:
+		return n
+	else: 
+		while x <= n and x < 2147483648:
+			if n == x:
+				return n
+			x *= 2
+
+	message = "%d is not a power of two." % n
+# 	print message
+	raise argparse.ArgumentTypeError(message)
+## End of function 'type_power_of_two'
+
+
+###############################################################################
+def type_positive_float(num):
+	"""
+			type_positive_float
+			
+	Checks if an input is a positive float, as an argparse type.
+	
+	Passed: num - The number in question.
+	
+	Returns: n if it's a positive float, Argument Type Error if it isn't.
+	
+	"""
+	n = float(num)
+	if n >= 0:
+		return n
+	else:
+		message = "%d is not a positive float." % n
+		raise argparse.ArgumentTypeError(message)
+## End of function 'type_positive_float'
+
 	
 ###############################################################################
 def pairwise(iterable):
@@ -144,7 +200,6 @@ def pairwise(iterable):
 				above.
 	
 	"""
-
 	a, b = itertools.tee(iterable)
 	next(b, None)
 	return itertools.izip(a, b)
