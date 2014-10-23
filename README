@@ -41,6 +41,10 @@ replace_key_val replaces the value of a keyword in a FITS header;
 time_ordered_list takes a list of files and prints them in order of ascending 
 	start time (from the FITS header keyword TSTART);
 obs_epoch_rxte determines which RXTE calibration epoch an observation was taken 
-	during.
+	during;
+type_positive_float is an argparse type that checks if the input is a positive 
+	float;
+type_power_of_two is an argparse type that checks if the input is an integer 
+	power of two.
 
 This code comes with no guarantees.
