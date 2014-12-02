@@ -36,10 +36,18 @@ if __name__ == "__main__":
 # 	print "\n", file_hdu[2].header.keys
 	
 # 	print file_hdu[1].data[0]
+	print file_hdu[1].data[0:6]
+	print file_hdu[1].data[64:70]
+
+	print file_hdu[1].data[-1]
 # 	print "%.13f" % file_hdu[1].data[0].field(0)
 # 	print file_hdu[1].data
-	print "%.21f" % file_hdu[1].data[0].field(0)
-	print "%.21f" % file_hdu[1].data[-1].field(0)
+# 	print "%.21f" % file_hdu[1].data[0].field(0)
+# 	print "%.21f" % file_hdu[1].data[-1].field(0)
+	
+# 	for col_name in file_hdu[1].columns.names:
+# 		if 'Pcu2' in col_name and 'Spec' in col_name:
+# 			print col_name
 
 	
 # 	print file_hdu[2].header.keys
