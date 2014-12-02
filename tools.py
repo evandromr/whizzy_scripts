@@ -122,7 +122,7 @@ def power_of_two(num):
 	"""
 	n = int(num)
 	x = 2
-	assert n > 0
+	assert n > 0, "ERROR: Number must be positive."
 	
 	if n == 1:
 		return True
@@ -317,7 +317,7 @@ def obs_epoch_rxte(fits_file):
 		hour = 0
 		minute = 0
 	else:
-		print "\n\tERROR: Format of date is not understood."
+		raise Exception("ERROR: Format of date is not understood.")
 		return 0
 		
 	assert (year >= 1995 and year <= 2012) ## Making sure the date is actually 
@@ -327,7 +327,7 @@ def obs_epoch_rxte(fits_file):
 		(day is -1) or \
 		(hour is -1) or \
 		(minute is -1):
-		print "\n\tERROR: Month, date, year, hour, or minute not properly assigned."
+		raise Exception("ERROR: Month, date, year, hour, or minute not properly assigned.")
 		return 0
 	
 	## Determining in which epoch the date falls
@@ -392,6 +392,53 @@ def obs_epoch_rxte(fits_file):
 	else:
 		return 5
 	## End of function 'obs_epoch_rxte'
+
+################################################################################
+def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
+    """
+            make_lightcurve
+
+    Populates a segment of a light curve with photons from the event list.
+
+    Passed: time - Times at which a photon is detected.
+            energy - Energy channel in which the photon is detected.
+            n_bins - Number of bins per segment of light curve.
+            dt - Desired timestep between bins in n_bins, in seconds.
+            seg_start_time - Starting time of the segment, in TIMEZERO-corrected
+                RXTE clock time (or whatever it is).
+
+    Returns: lightcurve_2d - The populated 2-dimensional light curve. This one
+                has split up the light curves for each energy channel. In units 
+                of count rate.
+             lightcurve_1d - The populated 1-dimensional light curve. This one
+                is "bolometric", ignoring energy bins. In units of count rate.
+
+    """
+    pass
+
+    ## Ranges need to be amount+1 here, because of how 'historgram' and
+    ## 'histogram2d' bin the values
+    t_bin_seq = np.arange(n_bins + 1) * dt + seg_start_time
+    e_bin_seq = np.arange(0, 65)
+
+    lightcurve_2d, t_bin_edges, e_bin_edges = np.histogram2d(time, energy,
+        bins=[t_bin_seq, e_bin_seq])
+    lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
+
+    lightcurve_2d /= dt  # Need /dt to have units of count rate
+    lightcurve_1d /= dt  # Need /dt to have units of count rate
+
+    lightcurve_2d = lightcurve_2d.astype(int)  # 1/dt is an int, so we can make
+                                               # 'lightcurve_2d' be ints here.
+    lightcurve_1d = lightcurve_1d.astype(int)  # 1/dt is an int, so we can make
+                                               # 'lightcurve_1d' be ints here.
+
+    ## lightcurve[bin][energy_channel]
+    ## lightcurve[:,energy_channel]
+
+    return lightcurve_2d, lightcurve_1d
+
+    ## End of function 'make_lightcurve'
 
 
 ###############################################################################
