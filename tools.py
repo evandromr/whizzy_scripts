@@ -1,25 +1,27 @@
+#!//anaconda/bin/python
 from astropy.io import fits
 import numpy as np
 import scipy as sp
 import itertools
 import argparse
 
+__author__ = "Abigail Stevens"
+__author_email__ = "A.L.Stevens@uva.nl"
+__year__ = "2013-2015"
+
 """
 		tools.py
 
 This has not been rigorously tested.
-There is no 'main' to this program; only helper methods to import and be called.
+There is no 'main' to this program, only helper methods to import and be called.
 
 To assign the returned value to a variable in a bash script (in the directory 
 containing tools.py, or with that directory added to PYTHONPATH) (where 'fun' 
 is the function name and 'vars' are the variables to be passed in):
-var=$(python -c 'from tools import fun; print fun(vars)')
+var=$(python -c "from tools import fun; print fun('$vars')")
 Alternatively: python -c "from tools import fun; fun(vars)" >> a_file
 
-Written in Python 2.7 by A.L. Stevens, A.L.Stevens@uva.nl, 2013-2014
-
-The scientific modules imported above, as well as python 2.7, can be downloaded
-in the Anaconda package, https://store.continuum.io/cshop/anaconda/
+Written in Python 2.7.
 
 """
 
@@ -50,7 +52,23 @@ def get_key_val(fits_file, ext, keyword):
 	hdulist.close()
 	
 	return key_value
-	## End of function 'get_key_val'
+## End of function 'get_key_val'
+
+
+###############################################################################
+def check_mode(file_list, datamode_key):
+	"""
+			check_mode
+	"""
+	input_files = [line.strip() for line in open(file_list)]
+	good_files = []
+	for file in input_files:
+		if datamode_key in get_key_val(file, 1, 'DATAMODE'):
+			good_files.append(file)
+			print file
+	return good_files
+	
+## End of 'check mode'
 
 
 ###############################################################################
@@ -235,7 +253,8 @@ def replace_key_val(fits_file, ext, keyword, value):
 	hdu.flush()
 	hdu.close()
 	return
-	## End of function 'replace_key_val'
+## End of function 'replace_key_val'
+
 
 ###############################################################################
 def time_ordered_list(file_list):
@@ -258,7 +277,7 @@ def time_ordered_list(file_list):
 # 	for time in sorted(times): print time
 	for filename in sorted_files: print filename
 	return
-	## End of function 'time_ordered_list'
+## End of function 'time_ordered_list'
 	
 	
 ###############################################################################
@@ -391,7 +410,8 @@ def obs_epoch_rxte(fits_file):
 		
 	else:
 		return 5
-	## End of function 'obs_epoch_rxte'
+## End of function 'obs_epoch_rxte'
+
 
 ################################################################################
 def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
@@ -414,7 +434,6 @@ def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
                 is "bolometric", ignoring energy bins. In units of count rate.
 
     """
-    pass
 
     ## Ranges need to be amount+1 here, because of how 'historgram' and
     ## 'histogram2d' bin the values
@@ -433,12 +452,82 @@ def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
     lightcurve_1d = lightcurve_1d.astype(int)  # 1/dt is an int, so we can make
                                                # 'lightcurve_1d' be ints here.
 
-    ## lightcurve[bin][energy_channel]
+    ## lightcurve[time_bin][energy_channel]
     ## lightcurve[:,energy_channel]
 
     return lightcurve_2d, lightcurve_1d
 
-    ## End of function 'make_lightcurve'
+## End of function 'make_lightcurve'
+
+
+###############################################################################
+def make_pulsation(n_bins, dt, freq, amp, mean, phase):
+	"""
+			make_pulsation
+			
+	Summary.
+	
+	Passed:
+	
+	Returns:
+	
+	"""
+	binning = 10
+	period = 1.0 / freq  # in seconds
+	bins_per_period = period / dt
+	tiny_bins = np.arange(0, n_bins, 1.0/binning)
+	smooth_sine = amp * np.sin(2.0 * np.pi * tiny_bins / bins_per_period + phase) + mean
+	time_series = np.mean(np.array_split(smooth_sine, n_bins), axis=1)
+	
+	return time_series
+## End of function 'make_pulsation'
+
+
+###############################################################################
+def make_col_list(fits_file, ext, with_words, without_words):
+	"""
+			make_col_list
+			
+	"""
+	
+# 	with_words=with_words.strip().split()
+# 	print with_words
+# 	without_words=without_words.strip().split()
+# 	print without_words
+# 	
+# 	file_hdu = fits.open(fits_file)
+# 	all_cols = file_hdu[ext].columns.names
+# 		
+# 	for a in with_words:
+# 		cols = filter(lambda x: a in x, all_cols)
+# 	print cols
+# 	for b in without_words:
+# 		temp = filter(lambda x: b in x, cols)
+# 		print temp
+# # 		cols.remove(temp)
+# 	print cols
+# 	
+# 	file_hdu.close()
+	return
+## End of function 'make_col_list'
+
+
+###############################################################################
+def no_duplicates(txt_file):
+	"""
+			no_duplicates
+			
+	"""
+# 	print txt_file
+	items = [line.strip() for line in open(txt_file)]
+# 	print items
+# 	print "IN HERE"
+	no_duplicate_items = list(set(items))
+	with open(txt_file, 'w') as out:	
+		for thing in no_duplicate_items: 
+			out.write(thing+"\n")
+	return
+## End of function 'no_duplicates'
 
 
 ###############################################################################
