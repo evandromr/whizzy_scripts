@@ -53,7 +53,6 @@ def get_key_val(fits_file, ext, keyword):
 		exit()
 		
 	key_value = hdulist[ext].header[keyword]
-# 	print key_value
 	hdulist.close()
 	
 	return key_value
@@ -471,11 +470,7 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	"""
 			make_pulsation
 			
-	Summary.
-	
-	Passed:
-	
-	Returns:
+	Make a simulated time series with a coherent pulsation.
 	
 	"""
 	binning = 10
@@ -493,7 +488,10 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 def make_col_list(fits_file, ext, with_words, without_words):
 	"""
 			make_col_list
-			
+	
+	Makes a list of column names with specific words or phases and without
+	specific words or phrases.
+	
 	"""
 	
 # 	with_words=with_words.strip().split()
@@ -522,7 +520,11 @@ def make_col_list(fits_file, ext, with_words, without_words):
 def no_duplicates(txt_file):
 	"""
 			no_duplicates
-			
+	
+	Reads in lines from a text file, removes duplicates (by using 'set'), and 
+	prints the non-duplicate lines back to the same text file, overwriting the
+	previous information.
+	
 	"""
 	items = [line.strip() for line in open(txt_file)]
 
