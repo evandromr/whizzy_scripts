@@ -43,10 +43,15 @@ def get_key_val(fits_file, ext, keyword):
 	"""
 	
 	ext = np.int8(ext)
-	assert (ext >= 0 and ext <= 3)
+	assert (ext >= 0 and ext <= 2)
 	keyword = str(keyword)
 	
-	hdulist = fits.open(fits_file)
+	try:
+		hdulist = fits.open(fits_file)
+	except IOError:
+		print "\tERROR: File does not exist: %s" % fits_file
+		exit()
+		
 	key_value = hdulist[ext].header[keyword]
 # 	print key_value
 	hdulist.close()
@@ -241,15 +246,16 @@ def replace_key_val(fits_file, ext, keyword, value):
 	
 	"""
 	ext = np.int8(ext)
-	assert (ext >= 0 and ext <= 3)
+	assert (ext >= 0 and ext <= 2)
 	keyword = str(keyword)
 	
-	hdu = fits.open(fits_file, mode='update')
-# 	print "Before replacing keyword value, %s = %f" \
-# 		%(keyword, hdu[ext].header[keyword])
+	try:
+		hdu = fits.open(fits_file, mode='update')
+	except IOError:
+		print "\tERROR: File does not exist: %s" % fits_file
+		exit()
+	
 	hdu[ext].header[keyword] = value
-# 	print "After replacing keyword value, %s = %f" \
-# 	%(keyword, hdu[ext].header[keyword])
 	hdu.flush()
 	hdu.close()
 	return
@@ -518,10 +524,8 @@ def no_duplicates(txt_file):
 			no_duplicates
 			
 	"""
-# 	print txt_file
 	items = [line.strip() for line in open(txt_file)]
-# 	print items
-# 	print "IN HERE"
+
 	no_duplicate_items = list(set(items))
 	with open(txt_file, 'w') as out:	
 		for thing in no_duplicate_items: 
