@@ -25,7 +25,7 @@ Written in Python 2.7.
 
 """
 
-###############################################################################
+################################################################################
 def get_key_val(fits_file, ext, keyword):
 	"""
 			get_key_val
@@ -59,7 +59,7 @@ def get_key_val(fits_file, ext, keyword):
 ## End of function 'get_key_val'
 
 
-###############################################################################
+################################################################################
 def check_mode(file_list, datamode_key):
 	"""
 			check_mode
@@ -75,7 +75,7 @@ def check_mode(file_list, datamode_key):
 ## End of 'check mode'
 
 
-###############################################################################
+################################################################################
 def compute_obs_time(file_list):
 	"""
 			compute_obs_time
@@ -102,7 +102,7 @@ def compute_obs_time(file_list):
 ## End of function 'compute_obs_time'
 
 	
-###############################################################################
+################################################################################
 def read_obs_time(in_file):
 	"""
 		
@@ -130,7 +130,7 @@ def read_obs_time(in_file):
 ## End of function 'read_obs_time'
 
 
-###############################################################################
+################################################################################
 def power_of_two(num):
 	"""
 			power_of_two
@@ -155,7 +155,7 @@ def power_of_two(num):
 ## End of function 'power_of_two'
 
 
-###############################################################################
+################################################################################
 def type_power_of_two(num):
 	"""
 			type_power_of_two
@@ -186,7 +186,7 @@ def type_power_of_two(num):
 ## End of function 'type_power_of_two'
 
 
-###############################################################################
+################################################################################
 def type_positive_float(num):
 	"""
 			type_positive_float
@@ -207,7 +207,7 @@ def type_positive_float(num):
 ## End of function 'type_positive_float'
 
 	
-###############################################################################
+################################################################################
 def pairwise(iterable):
 	"""
 			pairwise
@@ -228,7 +228,7 @@ def pairwise(iterable):
 ## End of function 'pairwise'
 	
 	
-###############################################################################
+################################################################################
 def replace_key_val(fits_file, ext, keyword, value):
 	"""
 			replace_key_val
@@ -261,7 +261,7 @@ def replace_key_val(fits_file, ext, keyword, value):
 ## End of function 'replace_key_val'
 
 
-###############################################################################
+################################################################################
 def time_ordered_list(file_list):
 	"""
 			time_ordered_list
@@ -285,7 +285,7 @@ def time_ordered_list(file_list):
 ## End of function 'time_ordered_list'
 	
 	
-###############################################################################
+################################################################################
 def obs_epoch_rxte(fits_file):
 	"""
 			obs_epoch_rxte
@@ -465,7 +465,7 @@ def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
 ## End of function 'make_lightcurve'
 
 
-###############################################################################
+################################################################################
 def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	"""
 			make_pulsation
@@ -484,7 +484,7 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 ## End of function 'make_pulsation'
 
 
-###############################################################################
+################################################################################
 def make_col_list(fits_file, ext, with_words, without_words):
 	"""
 			make_col_list
@@ -516,7 +516,7 @@ def make_col_list(fits_file, ext, with_words, without_words):
 ## End of function 'make_col_list'
 
 
-###############################################################################
+################################################################################
 def no_duplicates(txt_file):
 	"""
 			no_duplicates
@@ -536,9 +536,11 @@ def no_duplicates(txt_file):
 ## End of function 'no_duplicates'
 
 
-###############################################################################
+################################################################################
 if __name__ == '__main__':
 
 	print "\n\t\t tools.py"
 	print "There is no 'main' to this program, only helper methods to import and be called.\n"
+
+################################################################################
 	
