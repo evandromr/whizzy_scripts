@@ -71,7 +71,6 @@ def check_mode(file_list, datamode_key):
 			good_files.append(file)
 			print file
 	return good_files
-	
 ## End of 'check mode'
 
 
@@ -205,6 +204,27 @@ def type_positive_float(num):
 		message = "%d is not a positive float." % n
 		raise argparse.ArgumentTypeError(message)
 ## End of function 'type_positive_float'
+
+
+################################################################################
+def type_positive_int(num):
+	"""
+			type_positive_int
+			
+	Checks if an input is a positive integer, as an argparse type.
+	
+	Passed: num - The number in question.
+	
+	Returns: n if it's a positive integer, Argument Type Error if it isn't.
+	
+	"""
+	n = int(num)
+	if n >= 0:
+		return n
+	else:
+		message = "%d is not a positive integer." % n
+		raise argparse.ArgumentTypeError(message)
+## End of function 'type_positive_int'
 
 	
 ################################################################################
@@ -419,15 +439,16 @@ def obs_epoch_rxte(fits_file):
 
 
 ################################################################################
-def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
+def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     """
-            make_lightcurve
+            make_2Dlightcurve
 
     Populates a segment of a light curve with photons from the event list.
 
     Passed: time - Times at which a photon is detected.
             energy - Energy channel in which the photon is detected.
             n_bins - Number of bins per segment of light curve.
+            detchans - Number of detector energy channels.
             dt - Desired timestep between bins in n_bins, in seconds.
             seg_start_time - Starting time of the segment, in TIMEZERO-corrected
                 RXTE clock time (or whatever it is).
@@ -435,34 +456,61 @@ def make_lightcurve(time, energy, n_bins, dt, seg_start_time):
     Returns: lightcurve_2d - The populated 2-dimensional light curve. This one
                 has split up the light curves for each energy channel. In units 
                 of count rate.
-             lightcurve_1d - The populated 1-dimensional light curve. This one
-                is "bolometric", ignoring energy bins. In units of count rate.
 
     """
 
-    ## Ranges need to be amount+1 here, because of how 'historgram' and
-    ## 'histogram2d' bin the values
+    ## Ranges need to be amount+1 here, because of how 'histogram2d' bins the 
+    ## values
     t_bin_seq = np.arange(n_bins + 1) * dt + seg_start_time
-    e_bin_seq = np.arange(0, 65)
+    e_bin_seq = np.arange(detchans + 1)
 
     lightcurve_2d, t_bin_edges, e_bin_edges = np.histogram2d(time, energy,
         bins=[t_bin_seq, e_bin_seq])
-    lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
 
     lightcurve_2d /= dt  # Need /dt to have units of count rate
-    lightcurve_1d /= dt  # Need /dt to have units of count rate
 
     lightcurve_2d = lightcurve_2d.astype(int)  # 1/dt is an int, so we can make
                                                # 'lightcurve_2d' be ints here.
-    lightcurve_1d = lightcurve_1d.astype(int)  # 1/dt is an int, so we can make
-                                               # 'lightcurve_1d' be ints here.
 
     ## lightcurve[time_bin][energy_channel]
     ## lightcurve[:,energy_channel]
 
-    return lightcurve_2d, lightcurve_1d
+    return lightcurve_2d
 
-## End of function 'make_lightcurve'
+## End of function 'make_2Dlightcurve'
+
+
+################################################################################
+def make_1Dlightcurve(time, n_bins, dt, seg_start_time):
+    """
+            make_1Dlightcurve
+
+    Populates a segment of a light curve with photons from the event list.
+
+    Passed: time - Times at which a photon is detected.
+            n_bins - Number of bins per segment of light curve.
+            dt - Desired timestep between bins in n_bins, in seconds.
+            seg_start_time - Starting time of the segment, in TIMEZERO-corrected
+                RXTE clock time (or whatever it is).
+
+    Returns: lightcurve_1d - The populated 1-dimensional light curve. This one
+                is "bolometric", ignoring energy bins. In units of count rate.
+
+    """
+
+    ## Ranges need to be amount+1 here, because of how 'historgram' bins the 
+    ## values
+    t_bin_seq = np.arange(n_bins + 1) * dt + seg_start_time
+
+    lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
+
+    lightcurve_1d /= dt  # Need /dt to have units of count rate
+
+    lightcurve_1d = lightcurve_1d.astype(int)  # 1/dt is an int, so we can make
+                                               # 'lightcurve_1d' be ints here.
+
+    return lightcurve_1d
+## End of function 'make_1Dlightcurve'
 
 
 ################################################################################
@@ -477,7 +525,8 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	period = 1.0 / freq  # in seconds
 	bins_per_period = period / dt
 	tiny_bins = np.arange(0, n_bins, 1.0/binning)
-	smooth_sine = amp * np.sin(2.0 * np.pi * tiny_bins / bins_per_period + phase) + mean
+	smooth_sine = amp * np.sin(2.0 * np.pi * tiny_bins / bins_per_period + \
+		phase) + mean
 	time_series = np.mean(np.array_split(smooth_sine, n_bins), axis=1)
 	
 	return time_series
