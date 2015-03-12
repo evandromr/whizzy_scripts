@@ -3,7 +3,7 @@ import argparse
 from astropy.io import fits 
 
 __author__ = "Abigail Stevens"
-__author_email__ = "A.L.Stevens@uva.nl"
+__author_email__ = "A.L.Stevens at uva.nl"
 __year__ = "2014-2015"
 
 """
@@ -53,7 +53,7 @@ tables not images.")
 	
 	print file_hdu[0].header.keys
 	print "\n", file_hdu[1].header.keys
-	print "\n", file_hdu[2].header.keys
+# 	print "\n", file_hdu[2].header.keys
 	print "\nColumns of data table in ext 1:", file_hdu[1].columns.names
 	print "\n"
 	
@@ -62,10 +62,10 @@ tables not images.")
 	##########################################
 	
 # 	print file_hdu[1].data[0]
-	print file_hdu[1].data.field(0)
+# 	print file_hdu[1].data.field(0)
 # 	print file_hdu[1].data[-1]
 # 	print "%.13f" % file_hdu[1].data[0].field(0)
-# 	print file_hdu[1].data
+	print file_hdu[1].data
 # 	print file_hdu[2].columns.names
 # 	print file_hdu[2].data	
 # 	for col_name in file_hdu[1].columns.names:
