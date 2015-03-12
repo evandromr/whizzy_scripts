@@ -4,9 +4,11 @@ import numpy as np
 import scipy as sp
 import itertools
 import argparse
+import os
+import subprocess
 
 __author__ = "Abigail Stevens"
-__author_email__ = "A.L.Stevens@uva.nl"
+__author_email__ = "A.L.Stevens at uva.nl"
 __year__ = "2013-2015"
 
 """
@@ -58,13 +60,49 @@ def get_key_val(fits_file, ext, keyword):
 	return key_value
 ## End of function 'get_key_val'
 
+################################################################################
+def get_fits_tab_val(fits_file, ext, row, col):
+	"""
+			get_fits_tab_val
+	
+	Gets one value from a fits data table.
+	
+	Passed: fits_file - str - The full path of the FITS file.
+			ext - int - The FITS extension from which to get the data.
+			row - int - The row of the data table.
+			col - int - The column of the data table.
+	
+	Returns: tab_value - any - Value at data[row][col].
+	
+	"""
+	ext=np.int8(ext)
+	row=np.int(row)
+	col=np.int(col)
+	try:
+		hdulist = fits.open(fits_file)
+	except IOError:
+		print "\tERROR: File does not exist: %s" % fits_file
+		exit()
+	tab_value = hdulist[ext].data[row][col]
+	hdulist.close()
+	
+	return tab_value
+## End of function 'get_fits_tab_val'
+
 
 ################################################################################
 def check_mode(file_list, datamode_key):
 	"""
 			check_mode
 	"""
+	if not os.path.isfile(file_list):
+		raise Exception("ERROR: File list does not exist.")
+		
 	input_files = [line.strip() for line in open(file_list)]
+	
+	if not files:  ## If it's an empty list
+		raise Exception("ERROR: No files in the list %s" % file_list)
+		
 	good_files = []
 	for file in input_files:
 		if datamode_key in get_key_val(file, 1, 'DATAMODE'):
@@ -89,7 +127,14 @@ def compute_obs_time(file_list):
 	
 	"""
 
+	if not os.path.isfile(file_list):
+		raise Exception("ERROR: File list does not exist.")
+		
 	input_files = [line.strip() for line in open(file_list)]
+	
+	if not files:  ## If it's an empty list
+		raise Exception("ERROR: No files in the list %s" % file_list)
+		
 	total_time = 0
 	
 	for file in input_files:
@@ -115,7 +160,9 @@ def read_obs_time(in_file):
 	Returns: nothing
 	
 	"""
-	
+	if not os.path.isfile(in_file):
+		raise Exception("ERROR: File does not exist for tools.read_obs_time.")
+		
 	with open(in_file, 'r') as f:
 		for line in f:
 			if line[0].strip() == "#":
@@ -180,7 +227,6 @@ def type_power_of_two(num):
 			x *= 2
 
 	message = "%d is not a power of two." % n
-# 	print message
 	raise argparse.ArgumentTypeError(message)
 ## End of function 'type_power_of_two'
 
@@ -295,7 +341,13 @@ def time_ordered_list(file_list):
 	Returns: nothing, but prints
 	
 	"""
+	if not os.path.isfile(file_list):
+		raise Exception("ERROR: File list does not exist.")
+    	
 	files = [line.strip() for line in open(file_list)]
+	if not files:  ## If it's an empty list
+		raise Exception("ERROR: No files in the list %s" % file_list)
+		
 	times = [float(get_key_val(fits_file, 1, 'TSTART')) for fits_file in files]
 # 	for (time, filename) in zip(times, files): print time," ",filename
 	sorted_files = [x for y,x in sorted(zip(times,files))]
@@ -575,14 +627,56 @@ def no_duplicates(txt_file):
 	previous information.
 	
 	"""
+	if not os.path.isfile(txt_file):
+		raise Exception("ERROR: Duplicates file does not exist.")
+		
 	items = [line.strip() for line in open(txt_file)]
-
+	
+	if not items:  ## If it's an empty list
+		raise Exception("ERROR: No items in the duplicate list.")
+    	
 	no_duplicate_items = list(set(items))
 	with open(txt_file, 'w') as out:	
 		for thing in no_duplicate_items: 
 			out.write(thing+"\n")
 	return
 ## End of function 'no_duplicates'
+
+
+################################################################################
+def remove_obsIDs(totallist_file, removelist_file):
+	"""
+			remove_obsIDs
+		
+	Makes a copy of the original list file, removes elements of the list, and 
+	prints back to the original 'total list' file (overwriting it).
+	
+	"""
+	if not os.path.isfile(totallist_file):
+		raise Exception("ERROR: Total obsID list does not exist.")
+	if not os.path.isfile(removelist_file):
+		raise Exception("ERROR: List of obsIDs to remove does not exist.")
+	
+	cp_totallist = os.path.splitext(totallist_file)[0]+"_all.lst"
+	subprocess.call(["cp", totallist_file, cp_totallist])
+	
+	good_obsIDs = [line.strip() for line in open(totallist_file)]
+	bad_obsIDs = [line.strip() for line in open(removelist_file)]
+	
+	if not good_obsIDs:  ## If it's an empty list
+		raise Exception("ERROR: No files in the eventlist list.")
+	if not bad_obsIDs:  ## If it's an empty list
+		raise Exception("ERROR: No files in the eventlist list.")
+	
+	for item in bad_obsIDs:
+		good_obsIDs.remove(item)
+	
+	with open(totallist_file, 'w') as out:
+		for thing in good_obsIDs: 
+			out.write(thing+"\n")
+	
+	return
+## End of function 'remove_obsIDs'
 
 
 ################################################################################
