@@ -651,6 +651,13 @@ def remove_obsIDs(totallist_file, removelist_file):
 	Makes a copy of the original list file, removes elements of the list, and 
 	prints back to the original 'total list' file (overwriting it).
 	
+	
+	Or use the following bash commands with awk:
+	
+	for element in $( cat "$file1" ); do
+		awk "!/$element/" $file2 > dump.txt && mv dump.txt $file2
+	done
+	
 	"""
 	if not os.path.isfile(totallist_file):
 		raise Exception("ERROR: Total obsID list does not exist.")
