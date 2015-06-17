@@ -46,6 +46,10 @@ def get_key_val(fits_file, ext, keyword):
 	any type
 		Value of the given keyword.
 	
+	Raises
+	------
+	IOError if the input file isn't actually a FITS file.
+	
 	"""
 	
 	ext = np.int8(ext)
@@ -62,7 +66,7 @@ def get_key_val(fits_file, ext, keyword):
 	hdulist.close()
 	
 	return key_value
-## End of function 'get_key_val'
+
 
 ################################################################################
 def get_fits_tab_val(fits_file, ext, row, col):
@@ -88,6 +92,10 @@ def get_fits_tab_val(fits_file, ext, row, col):
 	any type
 		Value at data[row][col].
 	
+	Raises
+	------
+	IOError if the input file isn't actually a FITS file. 
+	
 	"""
 	ext=np.int8(ext)
 	row=np.int(row)
@@ -101,7 +109,6 @@ def get_fits_tab_val(fits_file, ext, row, col):
 	hdulist.close()
 	
 	return tab_value
-## End of function 'get_fits_tab_val'
 
 
 ################################################################################
@@ -123,6 +130,11 @@ def check_mode(file_list, datamode_key):
 	list of strings
 		List of files from file_list that are in datamode_key.
 	
+	Raises
+	------
+	Exception if the file list doesn't exist.
+	
+	Exception if the list is empty.
 	
 	"""
 	if not os.path.isfile(file_list):
@@ -139,7 +151,6 @@ def check_mode(file_list, datamode_key):
 			good_files.append(file)
 			print file
 	return good_files
-## End of 'check mode'
 
 
 ################################################################################
@@ -157,6 +168,12 @@ def compute_obs_time(file_list):
 	-------
 	float
 		The total observation time.
+		
+	Raises
+	------
+	Exception if the file list doesn't exist.
+	
+	Exception if the list is empty.
 	
 	"""
 
@@ -174,9 +191,8 @@ def compute_obs_time(file_list):
 		time = float(get_key_val(file, 1, 'ONTIME'))
 		total_time += time
 
-	return total_time # in seconds
-	## but can double check units of times in FITS header
-## End of function 'compute_obs_time'
+	return total_time  ## in seconds
+			## should double check units of times in FITS header
 
 	
 ################################################################################
@@ -191,7 +207,12 @@ def read_obs_time(in_file):
 		
 	Returns
 	-------
-	nothing
+	float
+		The exposure time of the observation.
+	
+	Raises
+	------
+	Exception if the input file doesn't exist.
 	
 	"""
 	if not os.path.isfile(in_file):
@@ -202,12 +223,10 @@ def read_obs_time(in_file):
 			if line[0].strip() == "#":
 				if "xposure" in line.strip():
 					line = line.strip().split()
-# 					print line
 					obs_time = float(line[-2])
 					return obs_time
 			else:
 				return 0.0
-## End of function 'read_obs_time'
 
 
 ################################################################################
@@ -236,7 +255,6 @@ def power_of_two(num):
 		while x < n and x < 2147483648:
 			x *= 2
 		return n == x
-## End of function 'power_of_two'
 
 
 ################################################################################
@@ -274,7 +292,6 @@ def type_power_of_two(num):
 
 	message = "%d is not a power of two." % n
 	raise argparse.ArgumentTypeError(message)
-## End of function 'type_power_of_two'
 
 
 ################################################################################
@@ -308,7 +325,6 @@ def type_positive_float(num):
 	else:
 		message = "%d is not a positive float." % n
 		raise argparse.ArgumentTypeError(message)
-## End of function 'type_positive_float'
 
 
 ################################################################################
@@ -342,7 +358,6 @@ def type_positive_int(num):
 	else:
 		message = "%d is not a positive integer." % n
 		raise argparse.ArgumentTypeError(message)
-## End of function 'type_positive_int'
 
 	
 ################################################################################
@@ -364,7 +379,6 @@ def pairwise(iterable):
 	a, b = itertools.tee(iterable)
 	next(b, None)
 	return itertools.izip(a, b)
-## End of function 'pairwise'
 	
 	
 ################################################################################
@@ -390,6 +404,10 @@ def replace_key_val(fits_file, ext, keyword, value):
 	-------
 	nothing
 	
+	Raises
+	------
+	IOError if the input file isn't a FITS file.
+	
 	"""
 	ext = np.int8(ext)
 	assert (ext >= 0 and ext <= 2)
@@ -404,8 +422,6 @@ def replace_key_val(fits_file, ext, keyword, value):
 	hdu[ext].header[keyword] = value
 	hdu.flush()
 	hdu.close()
-	return
-## End of function 'replace_key_val'
 
 
 ################################################################################
@@ -429,7 +445,7 @@ def time_ordered_list(file_list):
 	------
 	Exception if the file list doesn't exist.
 	
-	Exception if there are no files in the file list.
+	Exception if the list is empty.
 	
 	"""
 	if not os.path.isfile(file_list):
@@ -442,9 +458,7 @@ def time_ordered_list(file_list):
 	times = [float(get_key_val(fits_file, 1, 'TSTART')) for fits_file in files]
 	sorted_files = [x for y,x in sorted(zip(times,files))]
 	for filename in sorted_files: print filename
-	
-## End of function 'time_ordered_list'
-	
+		
 	
 ################################################################################
 def obs_epoch_rxte(fits_file):
@@ -583,13 +597,12 @@ def obs_epoch_rxte(fits_file):
 			return 4
 		elif month == 5:
 			if day < 13: return 4
-			elif day >= 13: return 5  # since it changes at 00:00
+			elif day >= 13: return 5  ## since it changes at 00:00
 		else:
 			return 5
 		
 	else:
 		return 5
-## End of function 'obs_epoch_rxte'
 
 
 ################################################################################
@@ -600,7 +613,8 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     Parameters
     ----------
     time : np.array of floats
-    	Times at which a photon is detected.
+    	Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
+    	time or whatever it is).
     
     energy : np.array of ints
     	Energy channel in which the photon is detected.
@@ -615,7 +629,7 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     	Desired timestep between bins in n_bins, in seconds.
     
     seg_start_time : float
-    	Starting time of the segment, in TIMEZERO-corrected RXTE clock time (or 
+    	Start time of the segment, in TIMEZERO-corrected RXTE clock time (or 
     	whatever it is).
 
     Returns
@@ -634,17 +648,15 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     lightcurve_2d, t_bin_edges, e_bin_edges = np.histogram2d(time, energy,
         bins=[t_bin_seq, e_bin_seq])
 
-    lightcurve_2d /= dt  # Need /dt to have units of count rate
+    lightcurve_2d /= dt  ## Need /dt to have units of count rate
 
-    lightcurve_2d = lightcurve_2d.astype(int)  # 1/dt is an int, so we can make
-                                               # 'lightcurve_2d' be ints here.
+    lightcurve_2d = lightcurve_2d.astype(int)  ## 1/dt is an int, so we can make
+                                               ## 'lightcurve_2d' be ints here.
 
     ## lightcurve[time_bin][energy_channel]
     ## lightcurve[:,energy_channel]
 
     return lightcurve_2d
-
-## End of function 'make_2Dlightcurve'
 
 
 ################################################################################
@@ -652,13 +664,25 @@ def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
     """
     Populates a segment of a light curve with photons from the event list.
 
-    Passed: time - Times at which a photon is detected.
-            n_bins - int - Number of bins per segment of light curve.
-            dt - float - Desired timestep between bins in n_bins, in seconds.
-            seg_start_time - float - Starting time of the segment, in TIMEZERO-corrected
-                RXTE clock time (or whatever it is).
-            seg_end_time - float - Ending time of the segment, in TIMEZERO-corrected
-                RXTE clock time (or whatever it is).
+    Parameters
+    ----------
+    time : np.array of floats
+    	Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
+    	time or whatever it is).
+    
+    n_bins : int
+    	Number of bins per segment of light curve.
+    
+    dt : float
+    	Desired timestep between bins in n_bins, in seconds.
+    
+    seg_start_time : float
+    	Start time of the segment, in TIMEZERO-corrected RXTE clock time (or
+    	whatever it is).
+    
+    seg_end_time : float
+    	End time of the segment, in TIMEZERO-corrected RXTE clock time (or 
+    	whatever it is).
 
     Returns
     -------
@@ -671,19 +695,19 @@ def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
 
     ## Ranges need to be amount+1 here, because of how 'historgram' bins the 
     ## values
-    t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  # defining time bin edges
+    t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  ## defining time
+    														   ## bin edges
     dt = t_bin_seq[1]-t_bin_seq[0]
     # print dt
 
     lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
 
-    lightcurve_1d /= dt  # Need /dt to have units of count rate
+    lightcurve_1d /= dt  ## Need /dt to have units of count rate
 
-    lightcurve_1d = lightcurve_1d.astype(int)  # 1/dt is an int, so we can make
-                                               # 'lightcurve_1d' be ints here.
+    lightcurve_1d = lightcurve_1d.astype(int)  ## 1/dt is an int, so we can make
+                                               ## 'lightcurve_1d' be ints here.
 
     return lightcurve_1d
-## End of function 'make_1Dlightcurve'
 
 
 ################################################################################
@@ -719,7 +743,7 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	
 	"""
 	binning = 10
-	period = 1.0 / freq  # in seconds
+	period = 1.0 / freq  ## in seconds
 	bins_per_period = period / dt
 	tiny_bins = np.arange(0, n_bins, 1.0/binning)
 	smooth_sine = amp * np.sin(2.0 * np.pi * tiny_bins / bins_per_period + \
@@ -727,7 +751,6 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	time_series = np.mean(np.array_split(smooth_sine, n_bins), axis=1)
 	
 	return time_series
-## End of function 'make_pulsation'
 
 
 ################################################################################
@@ -756,7 +779,6 @@ def make_col_list(fits_file, ext, with_words, without_words):
 # 	print cols
 # 	
 # 	file_hdu.close()
-## End of function 'make_col_list'
 
 
 ################################################################################
@@ -782,7 +804,6 @@ def no_duplicates(txt_file):
 	
 	Exception if the text file is empty.
 	
-	
 	"""
 	if not os.path.isfile(txt_file):
 		raise Exception("ERROR: Duplicates file does not exist.")
@@ -796,7 +817,6 @@ def no_duplicates(txt_file):
 	with open(txt_file, 'w') as out:	
 		for thing in no_duplicate_items: 
 			out.write(thing+"\n")
-## End of function 'no_duplicates'
 
 
 ################################################################################
@@ -811,6 +831,29 @@ def remove_obsIDs(totallist_file, removelist_file):
 	for element in $( cat "$file1" ); do
 		awk "!/$element/" $file2 > dump.txt && mv dump.txt $file2
 	done
+	
+	Parameters
+	----------
+	totallist_file : str
+		Name of file containing a list of all the obsIDs, one per line.
+	
+	removelist_file : str
+		Name of file containing a list of the obsIDs to remove from the list, 
+		one per line.
+	
+	Returns
+	-------
+	nothing
+	
+	Raises
+	------
+	Exception if the list of all obsIDs doesn't exist.
+	
+	Exception if the list of obsIDs to remove doesn't exist.
+	
+	Exception if list of all obsIDs is empty.
+	
+	Exception if list of obsIDs to remove is empty.
 	
 	"""
 	if not os.path.isfile(totallist_file):
@@ -836,14 +879,13 @@ def remove_obsIDs(totallist_file, removelist_file):
 		for thing in good_obsIDs: 
 			out.write(thing+"\n")
 	
-## End of function 'remove_obsIDs'
-
 
 ################################################################################
 if __name__ == '__main__':
 
 	print "\n\t\t tools.py"
-	print "There is no 'main' to this program, only helper methods to import and be called.\n"
+	print "There is no 'main' to this program, only helper methods to import "\
+			"and be called.\n"
 
 ################################################################################
 	
