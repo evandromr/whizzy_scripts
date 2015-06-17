@@ -6,14 +6,11 @@ import itertools
 import argparse
 import os
 import subprocess
+import warnings
 
-__author__ = "Abigail Stevens"
-__author_email__ = "A.L.Stevens at uva.nl"
-__year__ = "2013-2015"
+__author__ = "Abigail Stevens, A.L.Stevens at uva.nl"
 
 """
-		tools.py
-
 This has not been rigorously tested.
 There is no 'main' to this program, only helper methods to import and be called.
 
@@ -23,24 +20,31 @@ is the function name and 'vars' are the variables to be passed in):
 var=$(python -c "from tools import fun; print fun('$vars')")
 Alternatively: python -c "from tools import fun; fun(vars)" >> a_file
 
-Written in Python 2.7.
+Abigail Stevens, A.L.Stevens at uva.nl, 2013-2015
 
 """
 
 ################################################################################
 def get_key_val(fits_file, ext, keyword):
 	"""
-			get_key_val
-	
 	Gets the value of a keyword from a FITS header. Keyword does not seem to be 
 	case-sensitive.
 
-	Passed: fits_file - str - The full path of the FITS file.
-			ext - int - The FITS extension in which to search for the given 
-				keyword.
-			keyword - str - The keyword for which you want the associated value.
+	Parameters
+	----------
+	fits_file : str
+		The full path of the FITS file.
+	
+	ext : int
+		The FITS extension in which to search for the given keyword.
+	
+	keyword : str
+		The keyword for which you want the associated value.
 			
-	Returns: key_value - any - Value of the given keyword.
+	Returns
+	-------
+	any type
+		Value of the given keyword.
 	
 	"""
 	
@@ -63,16 +67,26 @@ def get_key_val(fits_file, ext, keyword):
 ################################################################################
 def get_fits_tab_val(fits_file, ext, row, col):
 	"""
-			get_fits_tab_val
-	
 	Gets one value from a fits data table.
 	
-	Passed: fits_file - str - The full path of the FITS file.
-			ext - int - The FITS extension from which to get the data.
-			row - int - The row of the data table.
-			col - int - The column of the data table.
+	Parameters
+	----------
+	fits_file : str
+		The full path of the FITS file.
+		
+	ext : int
+		The FITS extension from which to get the data.
+		
+	row : int 
+		The row of the data table.
+			
+	col : int
+		The column of the data table.
 	
-	Returns: tab_value - any - Value at data[row][col].
+	Returns
+	-------
+	any type
+		Value at data[row][col].
 	
 	"""
 	ext=np.int8(ext)
@@ -93,7 +107,23 @@ def get_fits_tab_val(fits_file, ext, row, col):
 ################################################################################
 def check_mode(file_list, datamode_key):
 	"""
-			check_mode
+	Checks that the data mode of each file in file_list matches datamode_key.
+	Designed for RXTE FITS files.
+	
+	Parameters
+	----------
+	file_list : string
+		List of files of which to check the data mode. 
+	
+	datamode_key : string
+		The name of the data mode, as a FITS header keyword.
+	
+	Returns
+	-------
+	list of strings
+		List of files from file_list that are in datamode_key.
+	
+	
 	"""
 	if not os.path.isfile(file_list):
 		raise Exception("ERROR: File list does not exist.")
@@ -115,15 +145,18 @@ def check_mode(file_list, datamode_key):
 ################################################################################
 def compute_obs_time(file_list):
 	"""
-			compute_obs_time
-		
 	Computes the total observation time of a list of observation FITS files, in
 	seconds.
 	
-	Passed: file_list - str - Name of file with list of fits files of the 
-				observations.
+	Parameters
+	----------
+	file_list : str
+		Name of file with list of fits files of the observations.
 	
-	Returns: total_time - float - The total observation time.
+	Returns
+	-------
+	float
+		The total observation time.
 	
 	"""
 
@@ -149,15 +182,16 @@ def compute_obs_time(file_list):
 ################################################################################
 def read_obs_time(in_file):
 	"""
-		
-		read_obs_time
-		
 	Read the total observation time from the header of a text file.
 	
-	Passed: in_file - str - Name of (ASCII/txt/dat) input file with exposure 
-				time in the header.
+	Parameters
+	----------
+	in_file : str
+		Name of (ASCII/txt/dat) input file with exposure time in the header.
 		
-	Returns: nothing
+	Returns
+	-------
+	nothing
 	
 	"""
 	if not os.path.isfile(in_file):
@@ -179,13 +213,17 @@ def read_obs_time(in_file):
 ################################################################################
 def power_of_two(num):
 	"""
-			power_of_two
-			
-	Checks if an input is a power of 2 (1 <= num < 2147483648).
+	Checks if a positive integer is a power of 2 (1 <= num < 2147483648).
 	
-	Passed: num - int - The number in question.
+	Parameters
+	----------
+	num : int
+		The number in question.
 	
-	Returns: bool - 'True' if 'num' is a power of two, 'False' if 'num' is not.
+	Returns
+	-------
+	bool
+		True if 'num' is a power of two, False if 'num' is not.
 	
 	"""
 	n = int(num)
@@ -204,14 +242,22 @@ def power_of_two(num):
 ################################################################################
 def type_power_of_two(num):
 	"""
-			type_power_of_two
-			
 	Checks if an input is a power of 2 (1 <= num < 2147483648), as an argparse 
 	type.
 	
-	Passed: num - The number in question.
+	Parameters
+	----------
+	num : int
+		The number in question.
 	
-	Returns: n if it's a power of two, ArgumentTypeError if it isn't.
+	Returns
+	-------
+	int
+		n, if it's a power of two 
+	
+	Raises
+	------
+	ArgumentTypeError if n isn't a power of two.
 	
 	"""
 	n = int(num)
@@ -234,16 +280,29 @@ def type_power_of_two(num):
 ################################################################################
 def type_positive_float(num):
 	"""
-			type_positive_float
-			
 	Checks if an input is a positive float, as an argparse type.
 	
-	Passed: num - The number in question.
+	Parameters
+	----------
+	num : int, long, float, or double
+		The number in question.
 	
-	Returns: n if it's a positive float, Argument Type Error if it isn't.
+	Returns
+	-------
+	float
+		n, if it's a positive float
+	
+	Raises
+	------
+	ArgumentTypeError if n isn't a real number or a positive float.
 	
 	"""
-	n = float(num)
+	try:
+		n = float(num)
+	except ValueError or TypeError:
+		message = "%d is not a real number." % n
+		raise argparse.ArgumentTypeError(message)
+		
 	if n >= 0:
 		return n
 	else:
@@ -255,16 +314,29 @@ def type_positive_float(num):
 ################################################################################
 def type_positive_int(num):
 	"""
-			type_positive_int
-			
 	Checks if an input is a positive integer, as an argparse type.
 	
-	Passed: num - The number in question.
+	Parameters
+	----------
+	num : int, long, float, or double
+		The number in question.
 	
-	Returns: n if it's a positive integer, Argument Type Error if it isn't.
+	Returns
+	-------
+	int
+		n, if it's a positive integer
+	
+	Raises
+	------
+	ArgumentTypeError if n isn't a real number or a positive integer.
 	
 	"""
-	n = int(num)
+	try:
+		n = int(num)
+	except ValueError or TypeError:
+		message = "%d is not a real number." % n
+		raise argparse.ArgumentTypeError(message)
+		
 	if n >= 0:
 		return n
 	else:
@@ -276,16 +348,17 @@ def type_positive_int(num):
 ################################################################################
 def pairwise(iterable):
 	"""
-			pairwise
-	
 	s -> (s0,s1), (s1,s2), (s2, s3), ...
 	From https://docs.python.org/2/library/itertools.html#recipes
 	Used when reading lines in the file so I can peek at the next line.
 	
-	Passed: an iterable, like a list or an open file
+	Parameters
+	----------
+	an iterable, like a list or an open file
 	
-	Returns: the next two items in an iterable, like in the example a few lines
-				above.
+	Returns
+	-------
+	The next two items in an iterable, like in the example a few lines above.
 	
 	"""
 	a, b = itertools.tee(iterable)
@@ -297,17 +370,25 @@ def pairwise(iterable):
 ################################################################################
 def replace_key_val(fits_file, ext, keyword, value):
 	"""
-			replace_key_val
-			
 	Replaces the value of a keyword in a FITS header with a given value.
 	
-	Passed: fits_file - str - Name of a FITS file.
-			ext - int - The FITS extension in which you want to replace the 
-				keyword value.
-			keyword - str - The keyword of the value you want to replace.
-			value - any - The new value for the FITS header keyword.
+	Parameters
+	----------
+	fits_file : str
+		The full path of the FITS file.
+		
+	ext : int
+		The FITS extension in which you want to replace the keyword value.
+				
+	keyword : str
+		The header keyword of the value you want to replace.
+			
+	value : any type
+		The new value for the header keyword.
 	
-	Returns: nothing
+	Returns
+	-------
+	nothing
 	
 	"""
 	ext = np.int8(ext)
@@ -330,15 +411,25 @@ def replace_key_val(fits_file, ext, keyword, value):
 ################################################################################
 def time_ordered_list(file_list):
 	"""
-			time_ordered_list
-			
 	Takes an input file containing a list of fits files, gets the start time of 
 	each file, sorts the files based on listed start time (from keyword TSTART),
 	applies the same sort to the file names, and prints the sorted file names.
 	
-	Passed: file_list - str - Name of a list of FITS files.
+	Parameters
+	----------
+	file_list : str
+		Name of a text file that is a list of FITS files, with one FITS file 
+		per line. 
 	
-	Returns: nothing, but prints
+	Returns
+	-------
+	nothing
+	
+	Raises
+	------
+	Exception if the file list doesn't exist.
+	
+	Exception if there are no files in the file list.
 	
 	"""
 	if not os.path.isfile(file_list):
@@ -349,19 +440,15 @@ def time_ordered_list(file_list):
 		raise Exception("ERROR: No files in the list %s" % file_list)
 		
 	times = [float(get_key_val(fits_file, 1, 'TSTART')) for fits_file in files]
-# 	for (time, filename) in zip(times, files): print time," ",filename
 	sorted_files = [x for y,x in sorted(zip(times,files))]
-# 	for time in sorted(times): print time
 	for filename in sorted_files: print filename
-	return
+	
 ## End of function 'time_ordered_list'
 	
 	
 ################################################################################
 def obs_epoch_rxte(fits_file):
 	"""
-			obs_epoch_rxte
-			
 	Determines the epoch of an RXTE observation. Returns 0 if an error occurred.
 	Future update: use MJD.
 
@@ -373,11 +460,26 @@ def obs_epoch_rxte(fits_file):
 	3. I'm interpreting the 'stop time' listed as the start time of the next 
 		epoch.
 	
-	Passed: fits_file - str - Name of an RXTE observation FITS file.
+	Parameters
+	----------
+	fits_file : str
+		Name of an RXTE observation FITS file (full path).
 	
-	Returns: epoch - int - The RXTE observation epoch of the FITS observation 
-				file.
+	Returns
+	-------
+	int 
+		The RXTE observation epoch of the FITS file.
 	
+	Raises
+	------
+	Exception if the 'DATE-OBS' keyword value isn't 8 or 19 characters in 
+	length.
+	
+	Exception if it couldn't read the month, day, year, hour, or minute of the 
+	'DATE-OBS' keyword value.
+	
+	UserWarning if it goes out to minute precision in determining the 
+	observation epoch, since it may not be correct.
 	"""
 	
 	obs_time = get_key_val(fits_file, 0, 'DATE-OBS')
@@ -423,7 +525,7 @@ def obs_epoch_rxte(fits_file):
 		(day is -1) or \
 		(hour is -1) or \
 		(minute is -1):
-		raise Exception("ERROR: Month, date, year, hour, or minute not properly assigned.")
+		raise Exception("ERROR: Month, day, year, hour, or minute not properly assigned.")
 		return 0
 	
 	## Determining in which epoch the date falls
@@ -441,7 +543,7 @@ def obs_epoch_rxte(fits_file):
 				if hour < 18: return 1
 				elif hour > 18: return 2
 				else:
-					print "\n\tWARNING: Down to the minute in determining obs epoch. May not be correct."
+					warning.warn("Using minute precision to determine obs epoch. May not be correct.")
 					if minute < 33: return 1
 					else: return 2
 		elif month == 4:
@@ -451,7 +553,7 @@ def obs_epoch_rxte(fits_file):
 				if hour < 23: return 2
 				elif hour > 23: return 3
 				else:
-					print "\n\tWARNING: Down to the minute in determining obs epoch. May not be correct."
+					warning.warn("Using minute precision to determine obs epoch. May not be correct.")
 					if minute < 5: return 2
 					else: return 3
 		else:
@@ -470,7 +572,7 @@ def obs_epoch_rxte(fits_file):
 				if hour < 17: return 3
 				elif hour > 17: return 4
 				else:
-					print "\n\tWARNING: Down to the minute in determining obs epoch. May not be correct."
+					warning.warn("Using minute precision to determine obs epoch. May not be correct.")
 					if minute < 37: return 3
 					else: return 4
 		else: 
@@ -493,21 +595,34 @@ def obs_epoch_rxte(fits_file):
 ################################################################################
 def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     """
-            make_2Dlightcurve
-
     Populates a segment of a light curve with photons from the event list.
 
-    Passed: time - Times at which a photon is detected.
-            energy - Energy channel in which the photon is detected.
-            n_bins - Number of bins per segment of light curve.
-            detchans - Number of detector energy channels.
-            dt - Desired timestep between bins in n_bins, in seconds.
-            seg_start_time - Starting time of the segment, in TIMEZERO-corrected
-                RXTE clock time (or whatever it is).
+    Parameters
+    ----------
+    time : np.array of floats
+    	Times at which a photon is detected.
+    
+    energy : np.array of ints
+    	Energy channel in which the photon is detected.
+    
+    n_bins : int
+    	Number of bins per segment of light curve.
+        
+    detchans : int
+    	Number of detector energy channels.
+    
+    dt : float
+    	Desired timestep between bins in n_bins, in seconds.
+    
+    seg_start_time : float
+    	Starting time of the segment, in TIMEZERO-corrected RXTE clock time (or 
+    	whatever it is).
 
-    Returns: lightcurve_2d - The populated 2-dimensional light curve. This one
-                has split up the light curves for each energy channel. In units 
-                of count rate.
+    Returns
+    -------
+    2D np.array of ints
+    	The populated 2-dimensional light curve, with time as one axis and 
+    	energy channel as the other. In units of count rate.
 
     """
 
@@ -533,26 +648,32 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
 
 
 ################################################################################
-def make_1Dlightcurve(time, n_bins, dt, seg_start_time):
+def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
     """
-            make_1Dlightcurve
-
     Populates a segment of a light curve with photons from the event list.
 
     Passed: time - Times at which a photon is detected.
-            n_bins - Number of bins per segment of light curve.
-            dt - Desired timestep between bins in n_bins, in seconds.
-            seg_start_time - Starting time of the segment, in TIMEZERO-corrected
+            n_bins - int - Number of bins per segment of light curve.
+            dt - float - Desired timestep between bins in n_bins, in seconds.
+            seg_start_time - float - Starting time of the segment, in TIMEZERO-corrected
+                RXTE clock time (or whatever it is).
+            seg_end_time - float - Ending time of the segment, in TIMEZERO-corrected
                 RXTE clock time (or whatever it is).
 
-    Returns: lightcurve_1d - The populated 1-dimensional light curve. This one
-                is "bolometric", ignoring energy bins. In units of count rate.
+    Returns
+    -------
+    1D np.array of ints
+    	The populated 1-dimensional light curve, with time as the axis. This 
+    	lightcurve is "bolometric", i.e. ignoring energy bins. In units of 
+    	count rate.
 
     """
 
     ## Ranges need to be amount+1 here, because of how 'historgram' bins the 
     ## values
-    t_bin_seq = np.arange(n_bins + 1) * dt + seg_start_time
+    t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  # defining time bin edges
+    dt = t_bin_seq[1]-t_bin_seq[0]
+    # print dt
 
     lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
 
@@ -568,9 +689,33 @@ def make_1Dlightcurve(time, n_bins, dt, seg_start_time):
 ################################################################################
 def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 	"""
-			make_pulsation
-			
 	Make a simulated time series with a coherent pulsation.
+	
+	Parameters
+	----------
+	n_bins : int
+		Number of time bins per segment of light curve.
+	
+	dt : float
+		Desired timestep between bins (or per time bin), in seconds.
+	
+	freq : float
+		Desired frequency of the pulsation, in Hz.
+	
+	amp : float
+		Desired amplitude of pulsation.
+		
+	mean : float
+		Desired mean value of pulsation.
+		
+	phase : float
+		Desired phase offset of pulsation from a sine wave, in radians.
+		
+		
+	Returns
+	-------
+	np.array of floats
+		One segment of the pulsation light curve, with an amplitude per n_bin.
 	
 	"""
 	binning = 10
@@ -588,13 +733,11 @@ def make_pulsation(n_bins, dt, freq, amp, mean, phase):
 ################################################################################
 def make_col_list(fits_file, ext, with_words, without_words):
 	"""
-			make_col_list
-	
 	Makes a list of column names with specific words or phases and without
 	specific words or phrases.
 	
 	"""
-	
+	pass
 # 	with_words=with_words.strip().split()
 # 	print with_words
 # 	without_words=without_words.strip().split()
@@ -613,18 +756,32 @@ def make_col_list(fits_file, ext, with_words, without_words):
 # 	print cols
 # 	
 # 	file_hdu.close()
-	return
 ## End of function 'make_col_list'
 
 
 ################################################################################
 def no_duplicates(txt_file):
 	"""
-			no_duplicates
-	
 	Reads in lines from a text file, removes duplicates (by using 'set'), and 
 	prints the non-duplicate lines back to the same text file, overwriting the
 	previous information.
+	
+	Parameters
+	----------
+	txt_file : str
+		Name of the text file containing the list to check for duplicates; one 
+		entry per line.
+	
+	Returns
+	-------
+	nothing
+	
+	Raises
+	------
+	Exception if the text file doesn't exist.
+	
+	Exception if the text file is empty.
+	
 	
 	"""
 	if not os.path.isfile(txt_file):
@@ -639,15 +796,12 @@ def no_duplicates(txt_file):
 	with open(txt_file, 'w') as out:	
 		for thing in no_duplicate_items: 
 			out.write(thing+"\n")
-	return
 ## End of function 'no_duplicates'
 
 
 ################################################################################
 def remove_obsIDs(totallist_file, removelist_file):
 	"""
-			remove_obsIDs
-		
 	Makes a copy of the original list file, removes elements of the list, and 
 	prints back to the original 'total list' file (overwriting it).
 	
@@ -682,7 +836,6 @@ def remove_obsIDs(totallist_file, removelist_file):
 		for thing in good_obsIDs: 
 			out.write(thing+"\n")
 	
-	return
 ## End of function 'remove_obsIDs'
 
 
