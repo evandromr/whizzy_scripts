@@ -4,7 +4,8 @@ Whizzy little scripts I write for fun, mostly to help with research, in
 Python 2.7. 
 
 Scientific modules imported in the scripts, as well as python 2.7, can be 
-downloaded in the Anaconda package, https://store.continuum.io/cshop/anaconda/
+downloaded in the [Anaconda package]
+(https://store.continuum.io/cshop/anaconda/).
 
 
 ## Contents
