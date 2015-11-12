@@ -20,14 +20,16 @@ would happen if you tried to run this without having macports installed.
 ### dump_columns.py
 Dumps two columns from a FITS file into an ASCII/txt/dat file. You shouldn't
 actually use this, since you will lose float precision when switching from a 
-binary file format to an ASCII file format.
+binary file format to an ASCII file format. Like the HEASOFT FTOOL fdump, but 
+in python!
 
 ### fits_info.py
 Prints HDU information, extension 1 header keywords, and extension 1 column 
 names for a given FITS file. Using extension 1 here for RXTE event-mode data.
 
 ### get_keyword.py
-Gets the value of a keyword from a FITS header.
+Gets the value of a keyword from a FITS header. Like the HEASOFT FTOOL fkeypar, 
+but in python!
 
 ### obs_epoch_rxte.py
 Determines the observational epoch of a specific RXTE observation. Be careful 
@@ -39,21 +41,23 @@ Computes the total observation time for a list of FITS observation files.
 ### tools.py
 Centralized helper methods to import and call within another function:
 
-* get_key_val can get the value of a keyword from a FITS header; 
-* compute_obs_time computes the total observation time in seconds of a list of 
-	observation FITS files; 
-* read_obs_time reads the observation time from the text header; 
-* power_of_two checks is an integer is a power of two; 
-* pairwise allows you to get the next two items of an iterable; 
-* replace_key_val replaces the value of a keyword in a FITS header; 
-* time_ordered_list takes a list of files and prints them in order of ascending 
-	start time (from the FITS header keyword TSTART);
-* obs_epoch_rxte determines which RXTE calibration epoch an observation was taken 
-	during;
-* type_positive_float is an argparse type that checks if the input is a positive 
-	float;
-* type_power_of_two is an argparse type that checks if the input is an integer 
-	power of two.
+* **get_key_val** can get the value of a keyword from a FITS header (like 
+fkeypar); 
+* **compute_obs_time** computes the total observation time in seconds of a list
+of observation FITS files; 
+* **read_obs_time** reads the observation time from the text header; 
+* **power_of_two** checks is an integer is a power of two; 
+* **pairwise** allows you to get the next two items of an iterable; 
+* **replace_key_val** replaces the value of a keyword in a FITS header (like 
+fparkey); 
+* **time_ordered_list** takes a list of files and prints them in order of 
+ascending start time (from the FITS header keyword TSTART);
+* **obs_epoch_rxte** determines which RXTE calibration epoch an observation was
+taken during;
+* **type_positive_float** is an argparse type that checks if the input is a 
+positive float;
+* **type_power_of_two** is an argparse type that checks if the input is an 
+integer power of two.
 
 
 ## Authors and License
