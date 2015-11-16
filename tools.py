@@ -616,11 +616,11 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, seg_start, seg_end):
     Parameters
     ----------
     time : np.array of floats
-    	Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
-    	time or whatever it is).
+    	1-D array of times at which a photon is detected (assumes these times 
+    	are the front of the timebin?).
     
     energy : np.array of ints
-    	Energy channel in which the photon is detected.
+    	1-D array of the energy channel in which the photon is detected.
     
     n_bins : int
     	Number of bins per segment of light curve.
@@ -629,18 +629,16 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, seg_start, seg_end):
     	Number of detector energy channels.
     
     seg_start : float
-    	Start time of the segment, in TIMEZERO-corrected RXTE clock time (or 
-    	whatever it is).
+    	Start time of the segment, in the same units as the time array.
     
     seg_end : float
-    	End time of the segment, in TIMEZERO-corrected RXTE clock time (or 
-    	whatever it is).
+    	End time of the segment, in the same units as the time array.
 
     Returns
     -------
-    2D np.array of ints
-    	The populated 2-dimensional light curve, with time as one axis and 
-    	energy channel as the other. In units of count rate.
+    lightcurve_2d : np.array of ints
+    	2-D array of the populated 2-dimensional light curve, with time as one 
+    	axis and energy channel as the other. In units of count rate.
 
     """
 
@@ -674,8 +672,8 @@ def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
 	Parameters
 	----------
 	time : np.array of floats
-		Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
-		time or whatever it is).
+		1-D array of times at which a photon is detected (assumes these times 
+		are the front of the timebin?).
 
 	n_bins : int
 		Number of bins per segment of light curve.
@@ -684,19 +682,17 @@ def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
 		Desired timestep between bins in n_bins, in seconds.
 
 	seg_start : float
-		Start time of the segment, in TIMEZERO-corrected RXTE clock time (or
-		whatever it is).
+		Start time of the segment, in the same units as the time array.
 
 	seg_end : float
-		End time of the segment, in TIMEZERO-corrected RXTE clock time (or 
-		whatever it is).
+		End time of the segment, in the same units as the time array.
 
 	Returns
 	-------
-	1D np.array of ints
-		The populated 1-dimensional light curve, with time as the axis. This 
-		lightcurve is "bolometric", i.e. ignoring energy bins. In units of 
-		count rate.
+	lightcurve_1d : np.array of ints
+		1-D array of the populated 1-dimensional light curve, with time as the 
+		axis. This lightcurve is "bolometric", i.e. ignoring energy bins. In 
+		units of count rate.
 
 	"""
 
