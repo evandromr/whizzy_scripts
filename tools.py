@@ -678,9 +678,6 @@ def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
 	n_bins : int
 		Number of bins per segment of light curve.
 
-	dt : float
-		Desired timestep between bins in n_bins, in seconds.
-
 	seg_start : float
 		Start time of the segment, in the same units as the time array.
 
