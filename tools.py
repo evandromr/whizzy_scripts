@@ -7,6 +7,7 @@ import argparse
 import os
 import subprocess
 import warnings
+from pprint import pprint
 
 __author__ = "Abigail Stevens, A.L.Stevens at uva.nl"
 
@@ -350,7 +351,7 @@ def type_positive_int(num):
 	try:
 		n = int(num)
 	except ValueError or TypeError:
-		message = "%d is not a real number." % n
+		message = "Input is not a positive integer."
 		raise argparse.ArgumentTypeError(message)
 		
 	if n >= 0:
@@ -418,8 +419,10 @@ def replace_key_val(fits_file, ext, keyword, value):
 	except IOError:
 		print "\tERROR: File does not exist: %s" % fits_file
 		exit()
-	
+# 	print value
+# 	print keyword
 	hdu[ext].header[keyword] = value
+# 	print hdu[ext].header[keyword]
 	hdu.flush()
 	hdu.close()
 
@@ -606,18 +609,18 @@ def obs_epoch_rxte(fits_file):
 
 
 ################################################################################
-def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
+def make_2Dlightcurve(time, energy, n_bins, detchans, seg_start, seg_end):
     """
     Populates a segment of a light curve with photons from the event list.
 
     Parameters
     ----------
     time : np.array of floats
-    	Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
-    	time or whatever it is).
+    	1-D array of times at which a photon is detected (assumes these times 
+    	are the front of the timebin?).
     
     energy : np.array of ints
-    	Energy channel in which the photon is detected.
+    	1-D array of the energy channel in which the photon is detected.
     
     n_bins : int
     	Number of bins per segment of light curve.
@@ -625,24 +628,26 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
     detchans : int
     	Number of detector energy channels.
     
-    dt : float
-    	Desired timestep between bins in n_bins, in seconds.
+    seg_start : float
+    	Start time of the segment, in the same units as the time array.
     
-    seg_start_time : float
-    	Start time of the segment, in TIMEZERO-corrected RXTE clock time (or 
-    	whatever it is).
+    seg_end : float
+    	End time of the segment, in the same units as the time array.
 
     Returns
     -------
-    2D np.array of ints
-    	The populated 2-dimensional light curve, with time as one axis and 
-    	energy channel as the other. In units of count rate.
+    lightcurve_2d : np.array of ints
+    	2-D array of the populated 2-dimensional light curve, with time as one 
+    	axis and energy channel as the other. In units of count rate.
 
     """
 
     ## Ranges need to be amount+1 here, because of how 'histogram2d' bins the 
     ## values
-    t_bin_seq = np.arange(n_bins + 1) * dt + seg_start_time
+    t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  ## defining time
+    														   ## bin edges
+    dt = t_bin_seq[1]-t_bin_seq[0]
+    
     e_bin_seq = np.arange(detchans + 1)
 
     lightcurve_2d, t_bin_edges, e_bin_edges = np.histogram2d(time, energy,
@@ -661,53 +666,55 @@ def make_2Dlightcurve(time, energy, n_bins, detchans, dt, seg_start_time):
 
 ################################################################################
 def make_1Dlightcurve(time, n_bins, seg_start, seg_end):
-    """
-    Populates a segment of a light curve with photons from the event list.
+	"""
+	Populates a segment of a light curve with photons from the event list.
 
-    Parameters
-    ----------
-    time : np.array of floats
-    	Times at which a photon is detected (in TIMEZERO-corrected RXTE clock 
-    	time or whatever it is).
-    
-    n_bins : int
-    	Number of bins per segment of light curve.
-    
-    dt : float
-    	Desired timestep between bins in n_bins, in seconds.
-    
-    seg_start_time : float
-    	Start time of the segment, in TIMEZERO-corrected RXTE clock time (or
-    	whatever it is).
-    
-    seg_end_time : float
-    	End time of the segment, in TIMEZERO-corrected RXTE clock time (or 
-    	whatever it is).
+	Parameters
+	----------
+	time : np.array of floats
+		1-D array of times at which a photon is detected (assumes these times 
+		are the front of the timebin?).
 
-    Returns
-    -------
-    1D np.array of ints
-    	The populated 1-dimensional light curve, with time as the axis. This 
-    	lightcurve is "bolometric", i.e. ignoring energy bins. In units of 
-    	count rate.
+	n_bins : int
+		Number of bins per segment of light curve.
 
-    """
+	seg_start : float
+		Start time of the segment, in the same units as the time array.
 
-    ## Ranges need to be amount+1 here, because of how 'historgram' bins the 
-    ## values
-    t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  ## defining time
-    														   ## bin edges
-    dt = t_bin_seq[1]-t_bin_seq[0]
-    # print dt
+	seg_end : float
+		End time of the segment, in the same units as the time array.
 
-    lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
+	Returns
+	-------
+	lightcurve_1d : np.array of ints
+		1-D array of the populated 1-dimensional light curve, with time as the 
+		axis. This lightcurve is "bolometric", i.e. ignoring energy bins. In 
+		units of count rate.
 
-    lightcurve_1d /= dt  ## Need /dt to have units of count rate
+	"""
 
-    lightcurve_1d = lightcurve_1d.astype(int)  ## 1/dt is an int, so we can make
-                                               ## 'lightcurve_1d' be ints here.
+	## Ranges need to be amount+1 here, because of how 'historgram' bins the 
+	## values
+	## Defining time bin edges
+	t_bin_seq = np.linspace(seg_start, seg_end, num=n_bins+1)  
+	print "%.15f %.15f %.15f" % (t_bin_seq[0], t_bin_seq[1], t_bin_seq[2])
+	print "%.15f %.15f %.15f" % (time[0], time[1], time[2])
+	
+	print t_bin_seq[0] - time[0]
+	print t_bin_seq[1] - time[1]
+	print t_bin_seq[2] - time[2]
 
-    return lightcurve_1d
+	dt = t_bin_seq[1]-t_bin_seq[0]
+# 	print "%.15f" % dt
+
+	lightcurve_1d, t_bin_edges = np.histogram(time, bins=t_bin_seq)
+
+	lightcurve_1d /= dt  ## Need /dt to have units of count rate
+
+	lightcurve_1d = lightcurve_1d.astype(int)  ## 1/dt is an int, so we can make
+											   ## 'lightcurve_1d' be ints here.
+
+	return lightcurve_1d
 
 
 ################################################################################
@@ -879,6 +886,16 @@ def remove_obsIDs(totallist_file, removelist_file):
 		for thing in good_obsIDs: 
 			out.write(thing+"\n")
 	
+
+################################################################################
+def get_num_of_params(mod_val_string, n_spectra):
+	n_ampersands = mod_val_string.count("&")
+	n_params = n_ampersands / int(n_spectra)
+# 	print "Number of ampersands:", n_ampersands
+# 	print "Number of spectra:", int(n_spectra)
+# 	print "Number of parameters:", n_params
+	return n_params
+
 
 ################################################################################
 if __name__ == '__main__':
